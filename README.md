@@ -3,6 +3,8 @@
 App privada (solo dueños y administración) para controlar ventas, costos, mermas y ganancia de la pastelería.
 Se instala en el iPhone desde Safari, sin App Store.
 
+**Link de la app:** https://broa-pastry.pages.dev
+
 - **Frontend:** React + TypeScript + Tailwind (Vite), instalable como app (PWA).
 - **Base de datos y usuarios:** Supabase, plan gratis. Proyecto `broa-pastry`, región São Paulo.
 - **Publicación:** Cloudflare Pages, plan gratis.
