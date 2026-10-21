@@ -4,6 +4,7 @@ import { mensajeError, supabase } from '../lib/supabase'
 import { NOMBRE_ROL, useSesion, type Configuracion } from '../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, Interruptor, Tarjeta } from '../componentes/ui'
 import { FormCambiarClave } from './Acceso'
+import { SeccionFaceId } from '../componentes/SeccionFaceId'
 
 function Fila({ a, titulo, detalle }: { a: string; titulo: string; detalle?: string }) {
   return (
@@ -40,7 +41,7 @@ export function Mas() {
         </p>
       </Tarjeta>
       <Grupo>
-        <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Cambiar contraseña" />
+        <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Face ID y contraseña" />
       </Grupo>
       {puede('gestionar_pedidos') && (
         <Grupo>
@@ -59,6 +60,7 @@ export function Mas() {
           {perfil?.rol === 'dueno' && (
             <Fila a="/mas/permisos" titulo="Permisos de la administradora" detalle="Qué puede ver y hacer" />
           )}
+          {perfil?.rol === 'dueno' && <Fila a="/mas/respaldo" titulo="Respaldo" detalle="Descargar una copia de todo" />}
           {(puede('editar_configuracion') || perfil?.rol === 'admin') && (
             <Fila a="/mas/configuracion" titulo="Configuración" detalle="IVA, turnos y cierre de sesión" />
           )}
@@ -78,6 +80,8 @@ export function MiCuenta() {
   return (
     <>
       <Encabezado titulo="Mi cuenta" volver="/mas" />
+      <SeccionFaceId />
+      <h2 className="mt-6 mb-2 text-lg font-semibold">Cambiar contraseña</h2>
       {listo ? (
         <div className="space-y-4">
           <Aviso tipo="ok">Contraseña actualizada.</Aviso>

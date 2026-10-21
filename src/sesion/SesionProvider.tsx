@@ -29,6 +29,7 @@ export interface Configuracion {
   margen_sobre_neto: boolean
   minutos_inactividad: number
   hora_corte_turno: string
+  ultimo_respaldo: string | null
 }
 
 interface InfoSesion {

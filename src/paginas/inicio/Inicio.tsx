@@ -151,6 +151,14 @@ export function Inicio() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [verTodos, setVerTodos] = useState(false)
+  const [refresco, setRefresco] = useState(0)
+
+  // Al volver a la app (ej.: después de importar desde el computador) se actualizan las cifras
+  useEffect(() => {
+    const alVolver = () => document.visibilityState === 'visible' && setRefresco((n) => n + 1)
+    document.addEventListener('visibilitychange', alVolver)
+    return () => document.removeEventListener('visibilitychange', alVolver)
+  }, [])
 
   const periodo = useMemo(
     () => (tipo === 'rango' ? calcularRango(rango.desde, rango.hasta) : calcularPeriodo(tipo, ancla, hoy)),
@@ -174,7 +182,7 @@ export function Inicio() {
     return () => {
       vivo = false
     }
-  }, [periodo])
+  }, [periodo, refresco])
 
   const primerNombre = info?.perfil?.nombre.split(' ')[0]
   const r = datos?.resumen

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useSesion, type Permiso } from '../sesion/SesionProvider'
 
@@ -73,7 +73,9 @@ export function Marco() {
   return (
     <div className="min-h-dvh bg-fondo">
       <main className="mx-auto max-w-xl px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[calc(6rem+env(safe-area-inset-bottom))]">
-        <Outlet />
+        <Suspense fallback={<p className="py-16 text-center text-suave">Cargando…</p>}>
+          <Outlet />
+        </Suspense>
       </main>
       <nav
         aria-label="Navegación principal"

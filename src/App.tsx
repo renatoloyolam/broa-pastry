@@ -1,28 +1,39 @@
-import type { ReactNode } from 'react'
+import { lazy, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ConfirmarProvider } from './componentes/Confirmar'
 import { Marco } from './componentes/Marco'
 import { Cargando } from './componentes/ui'
 import { CambiarClaveObligatorio, Login, ReclamarDueno, SinAcceso } from './paginas/Acceso'
-import { ConfiguracionPagina, Mas, MiCuenta, PermisosAdmin } from './paginas/Mas'
 import { Inicio } from './paginas/inicio/Inicio'
-import { Mermas } from './paginas/mermas/Mermas'
-import { Motivos } from './paginas/mermas/Motivos'
-import { ReporteMermas } from './paginas/mermas/ReporteMermas'
-import { Importar } from './paginas/ventas/Importar'
-import { Ventas } from './paginas/ventas/Ventas'
-import { CatalogoProvider } from './lib/catalogo'
-import { Categorias } from './paginas/productos/Categorias'
-import { IngredienteEditor, IngredientesLista } from './paginas/productos/Ingredientes'
-import { ProductoDetalle } from './paginas/productos/ProductoDetalle'
-import { ProductosLista } from './paginas/productos/Productos'
-import { RecetaEditor, RecetasLista } from './paginas/productos/Recetas'
-import { Usuarios } from './paginas/Usuarios'
-import { ConfigAlertas } from './paginas/alertas/ConfigAlertas'
-import { Exportar } from './paginas/exportar/Exportar'
-import { PedidoDetalle } from './paginas/pedidos/PedidoDetalle'
-import { Pedidos } from './paginas/pedidos/Pedidos'
 import { SesionProvider, useSesion, type Permiso } from './sesion/SesionProvider'
+
+// Las pantallas se cargan solo cuando se abren: la app parte más rápido en el iPhone.
+const cargar = <T extends Record<string, unknown>, K extends keyof T>(importar: () => Promise<T>, nombre: K) =>
+  lazy(() => importar().then((m) => ({ default: m[nombre] as React.ComponentType })))
+
+const Ventas = cargar(() => import('./paginas/ventas/Ventas'), 'Ventas')
+const Importar = cargar(() => import('./paginas/ventas/Importar'), 'Importar')
+const CatalogoProvider = cargar(() => import('./lib/catalogo'), 'CatalogoProvider')
+const ProductosLista = cargar(() => import('./paginas/productos/Productos'), 'ProductosLista')
+const ProductoDetalle = cargar(() => import('./paginas/productos/ProductoDetalle'), 'ProductoDetalle')
+const Categorias = cargar(() => import('./paginas/productos/Categorias'), 'Categorias')
+const RecetasLista = cargar(() => import('./paginas/productos/Recetas'), 'RecetasLista')
+const RecetaEditor = cargar(() => import('./paginas/productos/Recetas'), 'RecetaEditor')
+const IngredientesLista = cargar(() => import('./paginas/productos/Ingredientes'), 'IngredientesLista')
+const IngredienteEditor = cargar(() => import('./paginas/productos/Ingredientes'), 'IngredienteEditor')
+const Mermas = cargar(() => import('./paginas/mermas/Mermas'), 'Mermas')
+const ReporteMermas = cargar(() => import('./paginas/mermas/ReporteMermas'), 'ReporteMermas')
+const Motivos = cargar(() => import('./paginas/mermas/Motivos'), 'Motivos')
+const Mas = cargar(() => import('./paginas/Mas'), 'Mas')
+const MiCuenta = cargar(() => import('./paginas/Mas'), 'MiCuenta')
+const PermisosAdmin = cargar(() => import('./paginas/Mas'), 'PermisosAdmin')
+const ConfiguracionPagina = cargar(() => import('./paginas/Mas'), 'ConfiguracionPagina')
+const Usuarios = cargar(() => import('./paginas/Usuarios'), 'Usuarios')
+const ConfigAlertas = cargar(() => import('./paginas/alertas/ConfigAlertas'), 'ConfigAlertas')
+const Exportar = cargar(() => import('./paginas/exportar/Exportar'), 'Exportar')
+const Respaldo = cargar(() => import('./paginas/Respaldo'), 'Respaldo')
+const Pedidos = cargar(() => import('./paginas/pedidos/Pedidos'), 'Pedidos')
+const PedidoDetalle = cargar(() => import('./paginas/pedidos/PedidoDetalle'), 'PedidoDetalle')
 
 /** Oculta la pantalla si no hay permiso (la base de datos igual lo bloquea). */
 function Con({ permiso, children }: { permiso: Permiso; children: ReactNode }) {
@@ -68,6 +79,7 @@ function Rutas() {
         <Route path="mas/configuracion" element={<ConfiguracionPagina />} />
         <Route path="mas/alertas" element={<Con permiso="ver_costos"><ConfigAlertas /></Con>} />
         <Route path="mas/exportar" element={<Con permiso="exportar"><Exportar /></Con>} />
+        <Route path="mas/respaldo" element={<SoloDueno><Respaldo /></SoloDueno>} />
         <Route path="pedidos" element={<Con permiso="gestionar_pedidos"><Pedidos /></Con>} />
         <Route path="pedidos/:id" element={<Con permiso="gestionar_pedidos"><PedidoDetalle /></Con>} />
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { fechaDia, nombreDia, pesos, porcentaje } from '../../lib/formato'
+import { diasDesdeRespaldo } from '../../lib/respaldo'
 import { supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 
@@ -34,20 +35,24 @@ function Tarjeta({ icono, titulo, children, enlace }: { icono: string; titulo: R
 
 /** Alertas que se muestran arriba en Inicio. */
 export function AlertasInicio() {
-  const { puede } = useSesion()
+  const { puede, info, config } = useSesion()
   const [alertas, setAlertas] = useState<Alerta[] | null>(null)
 
   useEffect(() => {
     supabase.rpc('alertas').then(({ data }) => setAlertas((data as Alerta[]) ?? []))
   }, [])
 
-  if (!alertas || alertas.length === 0) return null
+  // Recordatorio semanal de respaldo (solo dueños)
+  const diasRespaldo = diasDesdeRespaldo(config?.ultimo_respaldo)
+  const pedirRespaldo = info?.perfil?.rol === 'dueno' && (diasRespaldo == null || diasRespaldo >= 7)
+  const cantidad = (alertas?.length ?? 0) + (pedirRespaldo ? 1 : 0)
+  if (!alertas || cantidad === 0) return null
 
   return (
     <section className="mb-4 overflow-hidden rounded-2xl border border-aviso/40 bg-superficie" aria-label="Alertas">
       <div className="flex items-center justify-between border-b border-borde px-4 py-2">
         <p className="text-sm font-semibold text-aviso">
-          {alertas.length === 1 ? '1 alerta' : `${alertas.length} alertas`}
+          {cantidad === 1 ? '1 alerta' : `${cantidad} alertas`}
         </p>
         {puede('ver_costos') && (
           <Link to="/mas/alertas" className="text-xs font-semibold text-primario">
@@ -56,6 +61,13 @@ export function AlertasInicio() {
         )}
       </div>
       <ul className="divide-y divide-borde">
+        {pedirRespaldo && (
+          <Tarjeta
+            icono="💾"
+            titulo={diasRespaldo == null ? 'Aún no has descargado un respaldo de la app.' : `Hace ${diasRespaldo} días que no descargas un respaldo.`}
+            enlace={{ a: '/mas/respaldo', texto: 'Descargar respaldo' }}
+          />
+        )}
         {alertas.map((a) => {
           switch (a.codigo) {
             case 'dias_sin_ventas':
