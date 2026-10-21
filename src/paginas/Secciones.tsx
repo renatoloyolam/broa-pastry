@@ -55,17 +55,6 @@ export function Ventas() {
   )
 }
 
-export function Productos() {
-  return (
-    <>
-      <Encabezado titulo="Productos" />
-      <EstadoVacio icono="🍰" titulo="Catálogo en preparación">
-        En la Fase 2 cargaremos los productos de Broa con su costo, ya sea manual o por receta.
-      </EstadoVacio>
-    </>
-  )
-}
-
 export function Mermas() {
   return (
     <>

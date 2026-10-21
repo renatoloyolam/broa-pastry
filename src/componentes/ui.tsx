@@ -1,5 +1,5 @@
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 
 type Variante = 'primario' | 'secundario' | 'peligro' | 'texto'
 
@@ -43,6 +43,54 @@ export function Campo({
       />
       {ayuda && <span className="mt-1 block text-xs text-suave">{ayuda}</span>}
     </label>
+  )
+}
+
+export function Selector({
+  etiqueta,
+  children,
+  ...resto
+}: SelectHTMLAttributes<HTMLSelectElement> & { etiqueta?: string; children: ReactNode }) {
+  const select = (
+    <select
+      {...resto}
+      className={`min-h-12 w-full rounded-xl border border-borde bg-superficie px-3 text-texto outline-none focus:border-primario disabled:opacity-60 ${resto.className ?? ''}`}
+    >
+      {children}
+    </select>
+  )
+  if (!etiqueta) return select
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium text-suave">{etiqueta}</span>
+      {select}
+    </label>
+  )
+}
+
+/** Etiqueta pequeña de estado (ej.: "Sin costo"). */
+export function Insignia({ clase, children }: { clase: string; children: ReactNode }) {
+  return <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${clase}`}>{children}</span>
+}
+
+export function Pestanas({ opciones }: { opciones: { a: string; texto: string; fin?: boolean }[] }) {
+  return (
+    <nav className="mb-4 flex gap-1 rounded-2xl bg-superficie-2 p-1">
+      {opciones.map((o) => (
+        <NavLink
+          key={o.a}
+          to={o.a}
+          end={o.fin}
+          className={({ isActive }) =>
+            `flex min-h-10 flex-1 items-center justify-center rounded-xl text-sm font-semibold ${
+              isActive ? 'bg-superficie text-primario shadow-sm' : 'text-suave'
+            }`
+          }
+        >
+          {o.texto}
+        </NavLink>
+      ))}
+    </nav>
   )
 }
 

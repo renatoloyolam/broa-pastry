@@ -4,7 +4,13 @@ import { Marco } from './componentes/Marco'
 import { Cargando } from './componentes/ui'
 import { CambiarClaveObligatorio, Login, ReclamarDueno, SinAcceso } from './paginas/Acceso'
 import { ConfiguracionPagina, Mas, MiCuenta, PermisosAdmin } from './paginas/Mas'
-import { Inicio, Mermas, Productos, Ventas } from './paginas/Secciones'
+import { Inicio, Mermas, Ventas } from './paginas/Secciones'
+import { CatalogoProvider } from './lib/catalogo'
+import { Categorias } from './paginas/productos/Categorias'
+import { IngredienteEditor, IngredientesLista } from './paginas/productos/Ingredientes'
+import { ProductoDetalle } from './paginas/productos/ProductoDetalle'
+import { ProductosLista } from './paginas/productos/Productos'
+import { RecetaEditor, RecetasLista } from './paginas/productos/Recetas'
 import { Usuarios } from './paginas/Usuarios'
 import { SesionProvider, useSesion, type Permiso } from './sesion/SesionProvider'
 
@@ -32,7 +38,15 @@ function Rutas() {
       <Route element={<Marco />}>
         <Route index element={<Inicio />} />
         <Route path="ventas" element={<Con permiso="ver_ventas"><Ventas /></Con>} />
-        <Route path="productos" element={<Con permiso="ver_costos"><Productos /></Con>} />
+        <Route path="productos" element={<Con permiso="ver_costos"><CatalogoProvider /></Con>}>
+          <Route index element={<ProductosLista />} />
+          <Route path="p/:id" element={<ProductoDetalle />} />
+          <Route path="categorias" element={<Categorias />} />
+          <Route path="recetas" element={<RecetasLista />} />
+          <Route path="recetas/:id" element={<RecetaEditor />} />
+          <Route path="ingredientes" element={<IngredientesLista />} />
+          <Route path="ingredientes/:id" element={<IngredienteEditor />} />
+        </Route>
         <Route path="mermas" element={<Con permiso="registrar_mermas"><Mermas /></Con>} />
         <Route path="mas" element={<Mas />} />
         <Route path="mas/cuenta" element={<MiCuenta />} />
