@@ -42,6 +42,11 @@ export function Mas() {
       <Grupo>
         <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Cambiar contraseña" />
       </Grupo>
+      {puede('gestionar_pedidos') && (
+        <Grupo>
+          <Fila a="/pedidos" titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />
+        </Grupo>
+      )}
       {(puede('exportar') || puede('ver_costos')) && (
         <Grupo>
           {puede('exportar') && <Fila a="/mas/exportar" titulo="Exportar reportes" detalle="Excel, PDF y CSV para el contador" />}

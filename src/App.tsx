@@ -20,6 +20,8 @@ import { RecetaEditor, RecetasLista } from './paginas/productos/Recetas'
 import { Usuarios } from './paginas/Usuarios'
 import { ConfigAlertas } from './paginas/alertas/ConfigAlertas'
 import { Exportar } from './paginas/exportar/Exportar'
+import { PedidoDetalle } from './paginas/pedidos/PedidoDetalle'
+import { Pedidos } from './paginas/pedidos/Pedidos'
 import { SesionProvider, useSesion, type Permiso } from './sesion/SesionProvider'
 
 /** Oculta la pantalla si no hay permiso (la base de datos igual lo bloquea). */
@@ -66,6 +68,8 @@ function Rutas() {
         <Route path="mas/configuracion" element={<ConfiguracionPagina />} />
         <Route path="mas/alertas" element={<Con permiso="ver_costos"><ConfigAlertas /></Con>} />
         <Route path="mas/exportar" element={<Con permiso="exportar"><Exportar /></Con>} />
+        <Route path="pedidos" element={<Con permiso="gestionar_pedidos"><Pedidos /></Con>} />
+        <Route path="pedidos/:id" element={<Con permiso="gestionar_pedidos"><PedidoDetalle /></Con>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

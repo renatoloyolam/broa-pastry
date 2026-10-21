@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { GraficoDias } from '../../componentes/GraficoDias'
 import { AlertasInicio } from '../alertas/Alertas'
+import { ResumenPedidos } from '../pedidos/ResumenPedidos'
 import { Aviso, Boton, Campo, EstadoVacio, Tarjeta } from '../../componentes/ui'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import {
@@ -201,6 +202,7 @@ export function Inicio() {
       </header>
 
       <AlertasInicio />
+      <ResumenPedidos />
 
       {/* Selector de período */}
       <div className="mb-3 flex gap-1 rounded-2xl bg-superficie-2 p-1" role="tablist" aria-label="Período">
