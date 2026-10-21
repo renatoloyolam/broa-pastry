@@ -11,7 +11,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      // Íconos y pantallas de carga del iPhone desde public/logo.svg
+      // Íconos y pantallas de carga del iPhone desde public/logo-original.png
       pwaAssets: { config: true, overrideManifestIcons: true },
       manifest: {
         name: 'Broa Pastry by Sofía',
@@ -21,13 +21,13 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#465941',
-        theme_color: '#465941',
+        background_color: '#324D4D',
+        theme_color: '#324D4D',
       },
       workbox: {
         // Solo guardamos la app en el teléfono; los datos siempre vienen de internet.
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
-        globIgnores: ['**/apple-splash-*', '**/xlsx-*.js', '**/jspdf*.js', '**/html2canvas-*.js', '**/purify.es-*.js', '**/index.es-*.js'],
+        globIgnores: ['**/apple-splash-*', '**/logo-original.png', '**/xlsx-*.js', '**/jspdf*.js', '**/html2canvas-*.js', '**/purify.es-*.js', '**/index.es-*.js'],
         navigateFallback: '/index.html',
         runtimeCaching: [],
       },

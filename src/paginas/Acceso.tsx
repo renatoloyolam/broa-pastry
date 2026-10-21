@@ -10,7 +10,7 @@ function PantallaMarca({ children }: { children: ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-fondo px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <img src="/logo.svg" alt="" className="mb-4 h-20 w-20 rounded-3xl shadow-sm" />
+          <img src="/logo.png" alt="Broa by Sofía" className="mb-4 h-28 w-28 rounded-full shadow-md" />
           <h1 className="font-serif text-3xl font-bold">Broa Pastry</h1>
           <p className="text-sm text-topo">by Sofía · Gestión</p>
         </div>

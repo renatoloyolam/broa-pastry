@@ -180,8 +180,8 @@ export function Interruptor({
 
 export function Cargando() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-primario">
-      <img src="/logo.svg" alt="Broa Pastry" className="h-24 w-24 animate-pulse rounded-3xl" />
+    <div className="flex min-h-dvh items-center justify-center bg-[#324D4D]">
+      <img src="/logo.png" alt="Broa Pastry" className="h-32 w-32 animate-pulse rounded-full" />
     </div>
   )
 }
