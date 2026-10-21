@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { GraficoDias } from '../../componentes/GraficoDias'
+import { AlertasInicio } from '../alertas/Alertas'
 import { Aviso, Boton, Campo, EstadoVacio, Tarjeta } from '../../componentes/ui'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import {
@@ -198,6 +199,8 @@ export function Inicio() {
         <p className="text-sm text-suave">Hola, {primerNombre}</p>
         <h1 className="font-serif text-3xl font-bold tracking-tight">Resultados</h1>
       </header>
+
+      <AlertasInicio />
 
       {/* Selector de período */}
       <div className="mb-3 flex gap-1 rounded-2xl bg-superficie-2 p-1" role="tablist" aria-label="Período">

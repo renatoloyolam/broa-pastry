@@ -42,6 +42,12 @@ export function Mas() {
       <Grupo>
         <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Cambiar contraseña" />
       </Grupo>
+      {(puede('exportar') || puede('ver_costos')) && (
+        <Grupo>
+          {puede('exportar') && <Fila a="/mas/exportar" titulo="Exportar reportes" detalle="Excel, PDF y CSV para el contador" />}
+          {puede('ver_costos') && <Fila a="/mas/alertas" titulo="Alertas" detalle="Qué avisos ver y sus límites" />}
+        </Grupo>
+      )}
       {(puede('gestionar_usuarios') || perfil?.rol === 'dueno' || puede('editar_configuracion')) && (
         <Grupo>
           {puede('gestionar_usuarios') && <Fila a="/mas/usuarios" titulo="Usuarios" detalle="Crear cuentas y roles" />}

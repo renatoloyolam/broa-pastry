@@ -27,7 +27,7 @@ export default defineConfig({
       workbox: {
         // Solo guardamos la app en el teléfono; los datos siempre vienen de internet.
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
-        globIgnores: ['**/apple-splash-*', '**/xlsx-*.js'],
+        globIgnores: ['**/apple-splash-*', '**/xlsx-*.js', '**/jspdf*.js', '**/html2canvas-*.js', '**/purify.es-*.js', '**/index.es-*.js'],
         navigateFallback: '/index.html',
         runtimeCaching: [],
       },
