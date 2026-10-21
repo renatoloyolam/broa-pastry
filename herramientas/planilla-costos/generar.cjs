@@ -50,15 +50,24 @@ begin
       omitidos := omitidos || (c.producto || coalesce(' · ' || c.opcion, '') || ' (usa receta en la app)');
       continue;
     else
+      -- Solo se toca lo que cambió, para no generar versiones de costo intermedias
       update public.costo_definiciones
       set modo = case when c.es_cero then 'cero'::public.modo_costo else 'manual' end,
           costo_manual_neto = case when c.es_cero then null else c.mp end
-      where id = v_def;
+      where id = v_def
+        and (modo is distinct from case when c.es_cero then 'cero'::public.modo_costo else 'manual' end
+             or costo_manual_neto is distinct from case when c.es_cero then null else c.mp end);
     end if;
-    delete from public.costo_adicionales where definicion_id = v_def and concepto = 'Mano de obra y gastos (planilla)';
     if c.mo > 0 then
-      insert into public.costo_adicionales (definicion_id, concepto, monto_neto)
-      values (v_def, 'Mano de obra y gastos (planilla)', c.mo);
+      update public.costo_adicionales set monto_neto = c.mo
+      where definicion_id = v_def and concepto = 'Mano de obra y gastos (planilla)' and monto_neto <> c.mo;
+      if not found and not exists (select 1 from public.costo_adicionales
+                                   where definicion_id = v_def and concepto = 'Mano de obra y gastos (planilla)') then
+        insert into public.costo_adicionales (definicion_id, concepto, monto_neto)
+        values (v_def, 'Mano de obra y gastos (planilla)', c.mo);
+      end if;
+    else
+      delete from public.costo_adicionales where definicion_id = v_def and concepto = 'Mano de obra y gastos (planilla)';
     end if;
   end loop;
   raise notice 'Sincronización lista. Omitidos: %', omitidos;
