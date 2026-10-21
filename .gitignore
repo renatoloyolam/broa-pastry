@@ -30,3 +30,7 @@ dist-ssr
 respaldos/
 .claude/
 supabase/.temp/
+
+# Herramienta de costos: salidas con datos del negocio
+herramientas/planilla-costos/bloques.json
+herramientas/planilla-costos/*.sql
