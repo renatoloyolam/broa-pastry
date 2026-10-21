@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { mensajeError, supabase } from '../lib/supabase'
 import { NOMBRE_ROL, useSesion, type Perfil, type Rol } from '../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, Tarjeta } from '../componentes/ui'
+import { useConfirmar } from '../componentes/Confirmar'
 
 async function llamarFuncion(cuerpo: Record<string, unknown>): Promise<{ clave_temporal: string }> {
   const { data, error } = await supabase.functions.invoke('gestionar-usuarios', { body: cuerpo })
@@ -51,6 +52,7 @@ function ClaveEntregada({ email, clave, alCerrar }: { email: string; clave: stri
 
 export function Usuarios() {
   const { info } = useSesion()
+  const confirmar = useConfirmar()
   const [usuarios, setUsuarios] = useState<Perfil[]>([])
   const [error, setError] = useState('')
   const [creando, setCreando] = useState(false)
@@ -93,7 +95,7 @@ export function Usuarios() {
   }
 
   async function restablecer(u: Perfil) {
-    if (!confirm(`¿Crear una contraseña temporal nueva para ${u.nombre}? La actual dejará de funcionar.`)) return
+    if (!(await confirmar({ mensaje: `¿Crear una contraseña temporal nueva para ${u.nombre}? La actual dejará de funcionar.`, accion: 'Crear contraseña nueva' }))) return
     setError('')
     try {
       const r = await llamarFuncion({ accion: 'restablecer_clave', id: u.id })

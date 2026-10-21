@@ -7,6 +7,7 @@ import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, Insignia, Interruptor, Selector, Tarjeta } from '../../componentes/ui'
 import { EditorCosto } from './EditorCosto'
+import { useConfirmar } from '../../componentes/Confirmar'
 
 function DatosProducto({ p }: { p: Producto }) {
   const { categorias, recargar } = useCatalogo()
@@ -163,10 +164,11 @@ function FilaOpcion({ p, o }: { p: Producto; o: Opcion }) {
 function OpcionesACero({ productoId, pendientes }: { productoId: number; pendientes: number }) {
   const { recargar } = useCatalogo()
   const [mensaje, setMensaje] = useState('')
+  const confirmar = useConfirmar()
   if (pendientes === 0) return null
 
   async function aplicar() {
-    if (!confirm(`¿Dejar en $0 las ${pendientes} opciones que no tienen costo? Útil para opciones como "Leche entera" o "Sin leche" que no cambian el costo. Después puedes editar cualquiera.`)) return
+    if (!(await confirmar({ mensaje: `¿Dejar en $0 las ${pendientes} opciones que no tienen costo? Útil para opciones como "Leche entera" o "Sin leche" que no cambian el costo. Después puedes editar cualquiera.`, accion: 'Dejar en $0' }))) return
     const { data, error } = await supabase.rpc('opciones_sin_costo_a_cero', { p_producto: productoId })
     if (error) return setMensaje(mensajeError(error))
     setMensaje(`Listo: ${data} opciones quedaron en $0.`)

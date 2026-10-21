@@ -4,6 +4,7 @@ import { fechaDia, fechaHora, nombreDia, numero, pesos } from '../../lib/formato
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Encabezado, EstadoVacio, Insignia, Tarjeta } from '../../componentes/ui'
+import { useConfirmar } from '../../componentes/Confirmar'
 
 interface Dia {
   fecha: string
@@ -28,6 +29,7 @@ interface Importacion {
 
 export function Ventas() {
   const { puede } = useSesion()
+  const confirmar = useConfirmar()
   const [dias, setDias] = useState<Dia[]>([])
   const [importaciones, setImportaciones] = useState<Importacion[]>([])
   const [cargando, setCargando] = useState(true)
@@ -53,7 +55,7 @@ export function Ventas() {
 
   async function deshacer(imp: Importacion) {
     const periodo = imp.desde ? `${fechaDia(imp.desde)}${imp.hasta !== imp.desde ? ` al ${fechaDia(imp.hasta!)}` : ''}` : ''
-    if (!confirm(`¿Deshacer "${imp.archivo}" (${periodo})? Se borrarán las ${numero(imp.transacciones_nuevas)} transacciones que trajo. Luego puedes volver a importarlo.`)) return
+    if (!(await confirmar({ mensaje: `¿Deshacer "${imp.archivo}" (${periodo})? Se borrarán las ${numero(imp.transacciones_nuevas)} transacciones que trajo. Luego puedes volver a importarlo.`, accion: 'Deshacer importación', peligro: true }))) return
     setError('')
     const { data, error } = await supabase.rpc('deshacer_importacion', { p_id: imp.id })
     if (error) return setError(mensajeError(error))

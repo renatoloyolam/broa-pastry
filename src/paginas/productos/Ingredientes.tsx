@@ -7,6 +7,7 @@ import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, EstadoVacio, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import { PESTANAS_CATALOGO } from './Productos'
+import { useConfirmar } from '../../componentes/Confirmar'
 
 export function IngredientesLista() {
   const { ingredientes, cargando, error } = useCatalogo()
@@ -79,6 +80,7 @@ export function IngredienteEditor() {
   const { ingredientes, recetas, recargar, cargando } = useCatalogo()
   const { puede } = useSesion()
   const editable = puede('editar_catalogo')
+  const confirmar = useConfirmar()
   const ing = ingredientes.find((i) => i.id === Number(id))
 
   const [nombre, setNombre] = useState(ing?.nombre ?? '')
@@ -152,7 +154,7 @@ export function IngredienteEditor() {
   }
 
   async function eliminar() {
-    if (!ing || !confirm(`¿Eliminar "${ing.nombre}"?`)) return
+    if (!ing || !(await confirmar({ mensaje: `¿Eliminar el ingrediente "${ing.nombre}"?`, accion: 'Eliminar', peligro: true }))) return
     const { error } = await supabase.from('ingredientes').delete().eq('id', ing.id)
     if (error) {
       return setError(

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { ConfirmarProvider } from './componentes/Confirmar'
 import { Marco } from './componentes/Marco'
 import { Cargando } from './componentes/ui'
 import { CambiarClaveObligatorio, Login, ReclamarDueno, SinAcceso } from './paginas/Acceso'
@@ -70,9 +71,11 @@ function Rutas() {
 export default function App() {
   return (
     <SesionProvider>
-      <BrowserRouter>
-        <Rutas />
-      </BrowserRouter>
+      <ConfirmarProvider>
+        <BrowserRouter>
+          <Rutas />
+        </BrowserRouter>
+      </ConfirmarProvider>
     </SesionProvider>
   )
 }

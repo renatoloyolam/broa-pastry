@@ -6,6 +6,7 @@ import { normalizar } from '../../lib/importador'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { useConfirmar } from '../../componentes/Confirmar'
 
 interface ProductoSimple {
   id: number
@@ -51,6 +52,7 @@ function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => v
 
 export function Mermas() {
   const { puede } = useSesion()
+  const confirmar = useConfirmar()
   const hoy = hoyIso()
   const [productos, setProductos] = useState<ProductoSimple[]>([])
   const [opciones, setOpciones] = useState<OpcionSimple[]>([])
@@ -147,7 +149,7 @@ export function Mermas() {
   }
 
   async function borrar(m: MermaDia) {
-    if (!confirm(`¿Borrar ${decimal(m.cantidad)} × ${m.producto}?`)) return
+    if (!(await confirmar({ mensaje: `¿Borrar la merma de ${decimal(m.cantidad)} × ${m.producto}?`, accion: 'Borrar', peligro: true }))) return
     const { error } = await supabase.from('mermas').delete().eq('id', m.id)
     if (error) return setError(mensajeError(error))
     await cargarLista()
