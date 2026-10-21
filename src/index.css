@@ -15,6 +15,7 @@
   --peligro: #b4472f;
   --exito: #3f7a3a;
   --aviso: #a8741a;
+  --grafico: #4a8a3c; /* validado: contraste y croma sobre fondo claro */
   color-scheme: light;
 }
 
@@ -33,6 +34,7 @@
     --peligro: #e07a62;
     --exito: #8fcf86;
     --aviso: #e0b25a;
+    --grafico: #5f9e52; /* validado sobre la superficie oscura */
     color-scheme: dark;
   }
 }
@@ -51,6 +53,7 @@
   --color-peligro: var(--peligro);
   --color-exito: var(--exito);
   --color-aviso: var(--aviso);
+  --color-grafico: var(--grafico);
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'New York', Georgia, 'Times New Roman', serif;
 }

@@ -160,6 +160,29 @@ function FilaOpcion({ p, o }: { p: Producto; o: Opcion }) {
   )
 }
 
+function OpcionesACero({ productoId, pendientes }: { productoId: number; pendientes: number }) {
+  const { recargar } = useCatalogo()
+  const [mensaje, setMensaje] = useState('')
+  if (pendientes === 0) return null
+
+  async function aplicar() {
+    if (!confirm(`¿Dejar en $0 las ${pendientes} opciones que no tienen costo? Útil para opciones como "Leche entera" o "Sin leche" que no cambian el costo. Después puedes editar cualquiera.`)) return
+    const { data, error } = await supabase.rpc('opciones_sin_costo_a_cero', { p_producto: productoId })
+    if (error) return setMensaje(mensajeError(error))
+    setMensaje(`Listo: ${data} opciones quedaron en $0.`)
+    await recargar()
+  }
+
+  return (
+    <div className="mb-3 space-y-2">
+      <Boton variante="secundario" onClick={aplicar}>
+        Dejar en $0 las {pendientes} opciones sin costo
+      </Boton>
+      {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
+    </div>
+  )
+}
+
 function NuevaOpcion({ productoId }: { productoId: number }) {
   const { recargar } = useCatalogo()
   const [abierta, setAbierta] = useState(false)
@@ -277,6 +300,9 @@ export function ProductoDetalle() {
                     <FilaOpcion key={o.id} p={p} o={o} />
                   ))}
               </ul>
+            )}
+            {puede('editar_catalogo') && (
+              <OpcionesACero productoId={p.id} pendientes={ops.filter((o) => !catalogo.costoDeOpcion.has(o.id)).length} />
             )}
             {puede('editar_catalogo') && <NuevaOpcion productoId={p.id} />}
           </section>
