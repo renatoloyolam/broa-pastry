@@ -2,6 +2,8 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { mensajeError, supabase } from '../lib/supabase'
 import { useSesion } from '../sesion/SesionProvider'
 import { Aviso, Boton, Campo } from '../componentes/ui'
+import { entrarConFaceId, faceIdDisponible, mensajeFaceId } from '../lib/faceid'
+import { AyudaInstalar } from '../componentes/AyudaInstalar'
 
 function PantallaMarca({ children }: { children: ReactNode }) {
   return (
@@ -25,6 +27,8 @@ export function Login() {
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
 
+  const [conFaceId, setConFaceId] = useState(false)
+
   async function entrar(e: FormEvent) {
     e.preventDefault()
     setError('')
@@ -34,11 +38,32 @@ export function Login() {
     if (error) setError(mensajeError(error))
   }
 
+  async function entrarFaceId() {
+    setError('')
+    setConFaceId(true)
+    try {
+      await entrarConFaceId()
+    } catch (err) {
+      const m = mensajeFaceId(err)
+      if (m) setError(m)
+    } finally {
+      setConFaceId(false)
+    }
+  }
+
   return (
     <PantallaMarca>
       {/* autocomplete correcto = el iPhone ofrece guardar la clave y entrar con Face ID */}
       <form onSubmit={entrar} className="space-y-4" method="post" action="#">
         {cerradaPorInactividad && <Aviso tipo="info">Cerramos tu sesión por inactividad. Vuelve a entrar.</Aviso>}
+        {faceIdDisponible() && (
+          <>
+            <Boton type="button" onClick={entrarFaceId} cargando={conFaceId} className="min-h-14 text-lg">
+              Entrar con Face ID
+            </Boton>
+            <p className="text-center text-xs text-suave">o con tu correo y contraseña</p>
+          </>
+        )}
         <Campo
           etiqueta="Correo"
           type="email"
@@ -60,13 +85,14 @@ export function Login() {
           onChange={(e) => setClave(e.target.value)}
         />
         {error && <Aviso>{error}</Aviso>}
-        <Boton type="submit" cargando={enviando}>
+        <Boton type="submit" variante={faceIdDisponible() ? 'secundario' : 'primario'} cargando={enviando}>
           Entrar
         </Boton>
         <p className="pt-2 text-center text-xs text-suave">
           ¿Olvidaste tu contraseña? Pídele a un dueño que te la restablezca.
         </p>
       </form>
+      <AyudaInstalar />
     </PantallaMarca>
   )
 }
