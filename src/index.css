@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+/* Paleta Broa: salvia #8BA97F · topo #9F9180 · crema #F4F1EA · verde bosque #465941 */
+:root {
+  --fondo: #f4f1ea;
+  --superficie: #ffffff;
+  --superficie-2: #ebe6db;
+  --texto: #2a3327;
+  --texto-suave: #6f6558;
+  --borde: #ddd5c6;
+  --primario: #465941;
+  --primario-texto: #f4f1ea;
+  --acento: #8ba97f;
+  --topo: #9f9180;
+  --peligro: #b4472f;
+  --exito: #3f7a3a;
+  --aviso: #a8741a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #1b2119;
+    --superficie: #252d22;
+    --superficie-2: #2f392b;
+    --texto: #f4f1ea;
+    --texto-suave: #b7ad9f;
+    --borde: #3b4636;
+    --primario: #8ba97f;
+    --primario-texto: #1b2119;
+    --acento: #8ba97f;
+    --topo: #b7a998;
+    --peligro: #e07a62;
+    --exito: #8fcf86;
+    --aviso: #e0b25a;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie-2: var(--superficie-2);
+  --color-texto: var(--texto);
+  --color-suave: var(--texto-suave);
+  --color-borde: var(--borde);
+  --color-primario: var(--primario);
+  --color-primario-texto: var(--primario-texto);
+  --color-acento: var(--acento);
+  --color-topo: var(--topo);
+  --color-peligro: var(--peligro);
+  --color-exito: var(--exito);
+  --color-aviso: var(--aviso);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'New York', Georgia, 'Times New Roman', serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+
+/* Evita que iPhone haga zoom al tocar un campo (requiere 16px o más). */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+.cifra {
+  font-variant-numeric: tabular-nums;
+}
