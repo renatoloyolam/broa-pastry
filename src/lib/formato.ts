@@ -54,6 +54,25 @@ export function decimal(valor: number | null | undefined, maxDecimales = 2): str
   return (valor < 0 ? '-' : '') + miles(Number(ent)) + (decLimpio ? ',' + decLimpio : '')
 }
 
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+
+/** Fecha de calendario "2026-10-10" → "10/10/2026" (sin conversiones de zona). */
+export function fechaDia(iso: string): string {
+  const [a, m, d] = iso.slice(0, 10).split('-')
+  return `${d}/${m}/${a}`
+}
+
+/** "2026-10-10" → "sábado" */
+export function nombreDia(iso: string): string {
+  const [a, m, d] = iso.slice(0, 10).split('-').map(Number)
+  return DIAS[new Date(Date.UTC(a, m - 1, d)).getUTCDay()]
+}
+
+/** Hoy en Santiago como "AAAA-MM-DD". */
+export function hoyIso(): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Santiago' }).format(new Date())
+}
+
 function partes(valor: Date) {
   const p = new Intl.DateTimeFormat('en-GB', {
     timeZone: ZONA,

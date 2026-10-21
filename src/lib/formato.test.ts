@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { decimal, fecha, fechaHora, leerNumero, numero, pesos, porcentaje } from './formato'
+import { decimal, fecha, fechaDia, fechaHora, hoyIso, leerNumero, nombreDia, numero, pesos, porcentaje } from './formato'
 
 describe('formato chileno', () => {
   it('pesos sin decimales y con punto de miles', () => {
@@ -39,6 +39,12 @@ describe('formato chileno', () => {
     expect(decimal(2.5)).toBe('2,5')
     expect(decimal(1250)).toBe('1.250')
     expect(decimal(501.333)).toBe('501,33')
+  })
+
+  it('días de calendario', () => {
+    expect(fechaDia('2026-10-10')).toBe('10/10/2026')
+    expect(nombreDia('2026-10-10')).toBe('sábado')
+    expect(hoyIso()).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('fechas dd/mm/aaaa en hora de Santiago', () => {
