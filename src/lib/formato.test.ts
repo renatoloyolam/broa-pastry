@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fecha, fechaHora, numero, pesos, porcentaje } from './formato'
+import { decimal, fecha, fechaHora, leerNumero, numero, pesos, porcentaje } from './formato'
 
 describe('formato chileno', () => {
   it('pesos sin decimales y con punto de miles', () => {
@@ -21,6 +21,24 @@ describe('formato chileno', () => {
 
   it('números con punto de miles', () => {
     expect(numero(12345)).toBe('12.345')
+  })
+
+  it('lee números escritos a la chilena', () => {
+    expect(leerNumero('1.250')).toBe(1250)
+    expect(leerNumero('$18.000')).toBe(18000)
+    expect(leerNumero('1.250.000')).toBe(1250000)
+    expect(leerNumero('2,5')).toBe(2.5)
+    expect(leerNumero('1.250,75')).toBe(1250.75)
+    expect(leerNumero('0.5')).toBe(0.5)
+    expect(leerNumero('600')).toBe(600)
+    expect(leerNumero('')).toBeNull()
+    expect(leerNumero('abc')).toBeNull()
+  })
+
+  it('muestra decimales con coma', () => {
+    expect(decimal(2.5)).toBe('2,5')
+    expect(decimal(1250)).toBe('1.250')
+    expect(decimal(501.333)).toBe('501,33')
   })
 
   it('fechas dd/mm/aaaa en hora de Santiago', () => {

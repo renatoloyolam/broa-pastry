@@ -31,6 +31,29 @@ export function numero(valor: number | null | undefined): string {
   return (valor < 0 ? '-' : '') + miles(valor)
 }
 
+/**
+ * Lee un monto o cantidad escrito a la chilena: "1.250" → 1250, "2,5" → 2.5,
+ * "$18.000" → 18000. Devuelve null si no es un número válido.
+ */
+export function leerNumero(texto: string): number | null {
+  let t = texto.replace(/[$\s]/g, '')
+  if (!t) return null
+  // Con coma: la coma es el decimal y los puntos son miles.
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.')
+  // Solo puntos en grupos de 3 dígitos: son miles ("18.000", "1.250.000").
+  else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '')
+  const n = Number(t)
+  return Number.isFinite(n) ? n : null
+}
+
+/** Número con decimales a la chilena: 2.5 → "2,5"; 1250 → "1.250" */
+export function decimal(valor: number | null | undefined, maxDecimales = 2): string {
+  if (valor == null || !Number.isFinite(valor)) return ''
+  const [ent, dec] = Math.abs(valor).toFixed(maxDecimales).split('.')
+  const decLimpio = dec?.replace(/0+$/, '')
+  return (valor < 0 ? '-' : '') + miles(Number(ent)) + (decLimpio ? ',' + decLimpio : '')
+}
+
 function partes(valor: Date) {
   const p = new Intl.DateTimeFormat('en-GB', {
     timeZone: ZONA,
