@@ -38,18 +38,7 @@ export function Inicio() {
         )}
       </div>
       <EstadoVacio icono="🥐" titulo="Todavía no hay ventas">
-        Cuando se importe el Excel de influye.app, aquí verás las cifras del día. El importador llega en la Fase 3.
-      </EstadoVacio>
-    </>
-  )
-}
-
-export function Ventas() {
-  return (
-    <>
-      <Encabezado titulo="Ventas" />
-      <EstadoVacio icono="📄" titulo="Aún no hay ventas importadas">
-        Pronto podrás subir aquí el Excel que exportas desde influye.app, desde el celular o el computador.
+        Cuando se importe el Excel de influye.app, aquí verás las cifras del día. Ve a Ventas para importarlo. El resumen del día con costo y ganancia llega en la Fase 4.
       </EstadoVacio>
     </>
   )
