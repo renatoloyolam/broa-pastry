@@ -5,7 +5,9 @@ import { Cargando } from './componentes/ui'
 import { CambiarClaveObligatorio, Login, ReclamarDueno, SinAcceso } from './paginas/Acceso'
 import { ConfiguracionPagina, Mas, MiCuenta, PermisosAdmin } from './paginas/Mas'
 import { Inicio } from './paginas/inicio/Inicio'
-import { Mermas } from './paginas/Secciones'
+import { Mermas } from './paginas/mermas/Mermas'
+import { Motivos } from './paginas/mermas/Motivos'
+import { ReporteMermas } from './paginas/mermas/ReporteMermas'
 import { Importar } from './paginas/ventas/Importar'
 import { Ventas } from './paginas/ventas/Ventas'
 import { CatalogoProvider } from './lib/catalogo'
@@ -52,6 +54,8 @@ function Rutas() {
           <Route path="ingredientes/:id" element={<IngredienteEditor />} />
         </Route>
         <Route path="mermas" element={<Con permiso="registrar_mermas"><Mermas /></Con>} />
+        <Route path="mermas/reporte" element={<Con permiso="registrar_mermas"><ReporteMermas /></Con>} />
+        <Route path="mermas/motivos" element={<Con permiso="editar_configuracion"><Motivos /></Con>} />
         <Route path="mas" element={<Mas />} />
         <Route path="mas/cuenta" element={<MiCuenta />} />
         <Route path="mas/usuarios" element={<Con permiso="gestionar_usuarios"><Usuarios /></Con>} />

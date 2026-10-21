@@ -290,7 +290,16 @@ export function Inicio() {
                 <Indicador titulo="Ventas" valor={pesos(r.ventas)} cambio={<Cambio actual={r.ventas} anterior={ant?.ventas} />} detalle="con IVA" />
                 <Indicador titulo="Margen" valor={porcentaje(m)} detalle="sobre venta neta" />
                 <Indicador titulo="Costo de lo vendido" valor={pesos(r.costo)} />
-                <Indicador titulo="Mermas" valor={pesos(r.mermas)} detalle={r.mermas ? undefined : 'se registran en la Fase 5'} />
+                <Indicador
+                  titulo="Mermas"
+                  valor={pesos(r.mermas)}
+                  cambio={<Cambio actual={r.mermas} anterior={ant?.mermas} invertir />}
+                  detalle={
+                    <Link to="/mermas/reporte" className="font-semibold text-primario">
+                      ver detalle
+                    </Link>
+                  }
+                />
               </>
             ) : (
               <Indicador destacado titulo="Ventas" valor={pesos(r.ventas)} cambio={<Cambio actual={r.ventas} anterior={ant?.ventas} />} detalle="con IVA" />
@@ -337,7 +346,7 @@ export function Inicio() {
                 <GraficoDias titulo="Ventas por día (con IVA)" puntos={datos.dias.map((d) => ({ fecha: d.fecha, valor: d.ventas }))} />
                 {verCostos && (
                   <GraficoDias
-                    titulo="Ganancia por día (sin IVA)"
+                    titulo="Ganancia por día (sin IVA, menos mermas)"
                     puntos={datos.dias.map((d) => ({ fecha: d.fecha, valor: ganancia(d) }))}
                   />
                 )}

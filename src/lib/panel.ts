@@ -29,6 +29,7 @@ export interface ProductoPanel extends FilaPanel {
 export interface DiaPanel extends FilaPanel {
   fecha: string
   transacciones: number
+  mermas: number | null
 }
 
 export interface TurnoPanel extends FilaPanel {
