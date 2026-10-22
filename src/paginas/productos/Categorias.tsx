@@ -31,6 +31,16 @@ function FilaCategoria({ c, editable, cantidad }: { c: Categoria; editable: bool
         {editable && (
           <button
             type="button"
+            onClick={() => guardar({ se_produce: !c.se_produce })}
+            title="Si se prepara al momento (café, bebidas), no aparece en Producción sugerida"
+            className={`min-h-11 rounded-lg px-2 text-xs font-semibold ${c.se_produce ? 'text-exito' : 'text-suave'}`}
+          >
+            {c.se_produce ? 'Se produce ✓' : 'Al momento'}
+          </button>
+        )}
+        {editable && (
+          <button
+            type="button"
             onClick={() => guardar({ activa: !c.activa })}
             className="min-h-11 rounded-lg px-2 text-sm font-semibold text-primario"
           >

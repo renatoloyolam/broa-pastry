@@ -8,6 +8,7 @@ export interface Categoria {
   nombre: string
   orden: number
   activa: boolean
+  se_produce: boolean
 }
 
 export interface Producto {

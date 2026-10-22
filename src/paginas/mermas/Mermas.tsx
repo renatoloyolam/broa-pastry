@@ -160,6 +160,9 @@ export function Mermas() {
   return (
     <>
       <Encabezado titulo="Mermas">
+        <Link to="/produccion" className="text-sm font-semibold text-primario">
+          Producción
+        </Link>
         <Link to="/mermas/reporte" className="text-sm font-semibold text-primario">
           Reporte
         </Link>

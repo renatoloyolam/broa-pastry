@@ -76,6 +76,14 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
+### Producción sugerida (Más → Producción sugerida, o Mermas → Producción)
+Para mañana (o la fecha que elijas) sugiere cuántas unidades hacer de cada producto, mirando lo
+vendido y botado los mismos días de la semana de las últimas semanas, repartido en AM y PM. Si casi
+no se bota, alcanza para un día bueno; si se bota más del 10%, baja a un día normal. La lista se
+puede compartir por WhatsApp o imprimir. Las categorías "Al momento" (café, bebidas) no aparecen:
+se cambia en Productos → Categorías. La encargada también la ve (sin costos). No considera feriados
+ni encargos de tortas.
+
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.
 

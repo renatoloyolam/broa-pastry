@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { armarFilas, CONCEPTO_MANO_OBRA, leerPlantilla, type FilaPlantilla } from './plantillaCostos'
 
 const datos = {
-  categorias: [{ id: 1, nombre: 'Galletería', orden: 30, activa: true }],
+  categorias: [{ id: 1, nombre: 'Galletería', orden: 30, activa: true, se_produce: true }],
   productos: [
     { id: 1, nombre: 'Danesas', categoria_id: 1, tipo: 'producto' as const, precio_referencia: 500, activo: true },
     { id: 2, nombre: 'Galletas', categoria_id: 1, tipo: 'producto' as const, precio_referencia: 0, activo: true },

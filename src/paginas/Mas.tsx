@@ -48,11 +48,10 @@ export function Mas() {
           <Fila a="/finanzas" titulo="Finanzas del mes" detalle="Gastos, meta, ganancia real, IVA e insumos" />
         </Grupo>
       )}
-      {puede('gestionar_pedidos') && (
-        <Grupo>
-          <Fila a="/pedidos" titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />
-        </Grupo>
-      )}
+      <Grupo>
+        <Fila a="/produccion" titulo="Producción sugerida" detalle="Cuánto hacer cada día según lo que se vende" />
+        {puede('gestionar_pedidos') && <Fila a="/pedidos" titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />}
+      </Grupo>
       {(puede('exportar') || puede('ver_costos')) && (
         <Grupo>
           {puede('exportar') && <Fila a="/mas/exportar" titulo="Exportar reportes" detalle="Excel, PDF y CSV para el contador" />}
