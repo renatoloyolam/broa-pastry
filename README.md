@@ -45,6 +45,9 @@ pedidos **no** se suman otra vez a las ventas.
 - Cuando cambias un costo, el nuevo rige **desde hoy**; las ventas pasadas conservan el costo que
   tenían. Si fue un error, al guardar aparece **Corregir desde una fecha**.
 - Los costos iniciales se cargaron desde la planilla de costos (ver sección 6).
+- **Muchos costos a la vez: Productos → "Costos en Excel".** Descarga la plantilla (todos los
+  productos y opciones con su costo actual), completa las columnas de color durazno **sin IVA** y
+  súbela. La app muestra qué cambia antes de guardar. Las filas "Receta" se editan en la app.
 
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.

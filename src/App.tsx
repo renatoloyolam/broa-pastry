@@ -17,6 +17,7 @@ const CatalogoProvider = cargar(() => import('./lib/catalogo'), 'CatalogoProvide
 const ProductosLista = cargar(() => import('./paginas/productos/Productos'), 'ProductosLista')
 const ProductoDetalle = cargar(() => import('./paginas/productos/ProductoDetalle'), 'ProductoDetalle')
 const Categorias = cargar(() => import('./paginas/productos/Categorias'), 'Categorias')
+const CostosExcel = cargar(() => import('./paginas/productos/CostosExcel'), 'CostosExcel')
 const RecetasLista = cargar(() => import('./paginas/productos/Recetas'), 'RecetasLista')
 const RecetaEditor = cargar(() => import('./paginas/productos/Recetas'), 'RecetaEditor')
 const IngredientesLista = cargar(() => import('./paginas/productos/Ingredientes'), 'IngredientesLista')
@@ -64,6 +65,7 @@ function Rutas() {
           <Route index element={<ProductosLista />} />
           <Route path="p/:id" element={<ProductoDetalle />} />
           <Route path="categorias" element={<Categorias />} />
+          <Route path="excel" element={<CostosExcel />} />
           <Route path="recetas" element={<RecetasLista />} />
           <Route path="recetas/:id" element={<RecetaEditor />} />
           <Route path="ingredientes" element={<IngredientesLista />} />

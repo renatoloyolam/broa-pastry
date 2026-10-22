@@ -127,6 +127,13 @@ export function ProductosLista() {
         </div>
       </div>
 
+      <Link
+        to="/productos/excel"
+        className="mb-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-borde bg-superficie text-sm font-semibold text-primario active:bg-superficie-2"
+      >
+        📊 Costos en Excel (descargar o subir plantilla)
+      </Link>
+
       {puede('editar_catalogo') &&
         (creando ? (
           <Tarjeta className="mb-3 space-y-3">
