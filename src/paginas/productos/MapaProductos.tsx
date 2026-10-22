@@ -62,7 +62,11 @@ export function MapaProductos() {
 
   return (
     <>
-      <Encabezado titulo="Productos" />
+      <Encabezado titulo="Productos">
+        <Link to="/productos/simulador" className="text-sm font-semibold text-primario">
+          Simulador
+        </Link>
+      </Encabezado>
       <Pestanas opciones={PESTANAS_CATALOGO} />
 
       <div className="mb-3 grid grid-cols-4 gap-1 rounded-2xl bg-superficie-2 p-1">
@@ -108,7 +112,10 @@ export function MapaProductos() {
                       <span className="cifra shrink-0 font-semibold text-peligro">{pesos(p.ganancia)}</span>
                     </Link>
                     <span className="block text-xs text-suave">
-                      Precio promedio {pesos(p.precioPromedio)} · para no perder, mínimo {pesos(p.precioMinimo)}
+                      Precio promedio {pesos(p.precioPromedio)} · para no perder, mínimo {pesos(p.precioMinimo)} ·{' '}
+                      <Link to={`/productos/simulador?p=${p.id}`} className="font-semibold text-primario">
+                        Simular
+                      </Link>
                     </span>
                   </li>
                 ))}

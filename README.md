@@ -76,6 +76,12 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
+### Simulador de precios (Productos → Mapa → Simulador, o "Simular precio" en cada producto)
+Prueba un precio nuevo (o un costo nuevo) y ve cómo cambia la ganancia del mes, usando lo vendido en
+los últimos 90 días. Indica cuánto podrían bajar las ventas sin perder ("aunque vendas 25% menos,
+ganas lo mismo") y ofrece precios para llegar a un margen de 50, 60 o 70%. En modo categoría
+simula subir todos sus precios en 3, 5, 10 o 15%. No cambia precios: eso se hace en influye.
+
 ### Producción sugerida (Más → Producción sugerida, o Mermas → Producción)
 Para mañana (o la fecha que elijas) sugiere cuántas unidades hacer de cada producto, mirando lo
 vendido y botado los mismos días de la semana de las últimas semanas, repartido en AM y PM. Si casi

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { estadoCosto, TEXTO_ESTADO, useCatalogo, type Opcion, type Producto } from '../../lib/catalogo'
 import { margenReferencia } from '../../lib/costeo'
 import { leerNumero, pesos, porcentaje } from '../../lib/formato'
@@ -256,7 +256,11 @@ export function ProductoDetalle() {
 
   return (
     <>
-      <Encabezado titulo={p.nombre} volver="/productos" />
+      <Encabezado titulo={p.nombre} volver="/productos">
+        <Link to={`/productos/simulador?p=${p.id}`} className="shrink-0 text-sm font-semibold text-primario">
+          Simular precio
+        </Link>
+      </Encabezado>
       <div className="-mt-3 mb-4 flex flex-wrap items-center gap-2">
         <Insignia clase={TEXTO_ESTADO[estado].clase}>{TEXTO_ESTADO[estado].texto}</Insignia>
         {p.precio_referencia ? (
