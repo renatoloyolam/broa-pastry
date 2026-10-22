@@ -91,6 +91,13 @@ gastos cargados, también la ganancia real. "A la misma fecha" compara los mismo
 va en el día 20, del 1 al 20 de ambos). Muestra los cambios por categoría, los productos que más
 crecieron y bajaron, los nuevos y los que dejaron de venderse.
 
+### Ventas por mes (Ventas)
+Las ventas se agrupan por mes (total, días, clientes, promedio por día y ▲▼ contra el mes anterior).
+Tocando un mes se abre su detalle: **Días** (cada día con su barra; tocando uno se abre ese día),
+**Productos** (con buscador; los que tienen opciones muestran cuáles se eligieron) y **Turnos y
+pagos** (AM/PM, medio de pago, categoría y quién vendió). El detalle de un día agrega **Boletas**:
+cada venta con su hora, medio de pago y sus ítems. Lo ven todos (no muestra costos).
+
 ### Horarios de venta (Ventas → Horarios)
 Mapa de calor con el promedio de ventas (en $, clientes o unidades) por día de la semana y hora,
 de las últimas 4, 8 o 12 semanas, para todo o una categoría. Más oscuro = se vende más. Resume la
