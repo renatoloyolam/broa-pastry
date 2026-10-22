@@ -29,6 +29,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
         globIgnores: ['**/apple-splash-*', '**/logo-original.png', '**/exceljs*.js', '**/xlsx-*.js', '**/jspdf*.js', '**/html2canvas-*.js', '**/purify.es-*.js', '**/index.es-*.js'],
         navigateFallback: '/index.html',
+        // Notificaciones del resumen semanal (public/push-sw.js)
+        importScripts: ['push-sw.js'],
         runtimeCaching: [],
       },
     }),

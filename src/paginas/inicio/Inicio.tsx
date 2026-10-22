@@ -218,6 +218,21 @@ export function Inicio() {
       <AlertasInicio />
       <ResumenFinanzas />
       <ResumenPedidos />
+      {/* Lunes a miércoles: acceso al resumen de la semana pasada */}
+      {[1, 2, 3].includes(new Date(`${hoy}T12:00:00Z`).getUTCDay()) && (
+        <Link
+          to="/resumen"
+          className="mb-4 flex items-center gap-3 rounded-2xl border border-borde bg-superficie px-4 py-3 text-sm active:bg-superficie-2"
+        >
+          <span className="text-2xl" aria-hidden>
+            📬
+          </span>
+          <span className="flex-1 font-semibold">Resumen de la semana pasada</span>
+          <span className="text-suave" aria-hidden>
+            ›
+          </span>
+        </Link>
+      )}
 
       {/* Selector de período */}
       <div className="mb-3 flex gap-1 rounded-2xl bg-superficie-2 p-1" role="tablist" aria-label="Período">

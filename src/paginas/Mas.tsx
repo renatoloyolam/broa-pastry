@@ -5,6 +5,7 @@ import { NOMBRE_ROL, useSesion, type Configuracion } from '../sesion/SesionProvi
 import { Aviso, Boton, Campo, Encabezado, Interruptor, Tarjeta } from '../componentes/ui'
 import { FormCambiarClave } from './Acceso'
 import { SeccionFaceId } from '../componentes/SeccionFaceId'
+import { SeccionNotificaciones } from '../componentes/SeccionNotificaciones'
 
 function Fila({ a, titulo, detalle }: { a: string; titulo: string; detalle?: string }) {
   return (
@@ -41,7 +42,7 @@ export function Mas() {
         </p>
       </Tarjeta>
       <Grupo>
-        <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Face ID y contraseña" />
+        <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Face ID, notificaciones y contraseña" />
       </Grupo>
       {puede('gestionar_finanzas') && (
         <Grupo>
@@ -85,6 +86,7 @@ export function MiCuenta() {
     <>
       <Encabezado titulo="Mi cuenta" volver="/mas" />
       <SeccionFaceId />
+      <SeccionNotificaciones />
       <h2 className="mt-6 mb-2 text-lg font-semibold">Cambiar contraseña</h2>
       {listo ? (
         <div className="space-y-4">
