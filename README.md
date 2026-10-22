@@ -67,6 +67,15 @@ pedidos **no** se suman otra vez a las ventas.
   compras mucho más de lo usado: stock, mermas sin anotar, pérdidas o recetas con costo bajo.
   Los proveedores nuevos del SII quedan "Por clasificar"; al clasificarlos se recuerda para siempre.
 
+### Mapa de productos (Productos → Mapa)
+Clasifica cada producto contra los de su categoría (últimos 30/90 días, este mes o el pasado):
+⭐ **Estrellas** (se venden mucho y dejan buen margen), 🐴 **populares de bajo margen** (subir
+precio o bajar costo; la app sugiere un precio), 🧩 **rentables poco vendidos** (promocionarlos) y
+🐶 **débiles** (evaluar sacarlos). "Margen" es el % que queda del precio sin IVA después del costo,
+comparado con el de su categoría. Arriba avisa en rojo los productos que se venden **bajo el costo**
+y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
+no se vendieron.
+
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.
 

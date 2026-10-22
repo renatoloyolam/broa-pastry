@@ -11,6 +11,7 @@ export const PESTANAS_CATALOGO = [
   { a: '/productos', texto: 'Productos', fin: true },
   { a: '/productos/recetas', texto: 'Recetas' },
   { a: '/productos/ingredientes', texto: 'Ingredientes' },
+  { a: '/productos/mapa', texto: 'Mapa' },
 ]
 
 function normalizar(t: string) {
