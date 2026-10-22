@@ -205,9 +205,14 @@ export function Inicio() {
 
   return (
     <>
-      <header className="mb-4">
-        <p className="text-sm text-suave">Hola, {primerNombre}</p>
-        <h1 className="font-serif text-3xl font-bold tracking-tight">Resultados</h1>
+      <header className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <p className="text-sm text-suave">Hola, {primerNombre}</p>
+          <h1 className="font-serif text-3xl font-bold tracking-tight">Resultados</h1>
+        </div>
+        <Link to="/comparar" className="pb-1 text-sm font-semibold text-primario">
+          Comparar meses
+        </Link>
       </header>
 
       <AlertasInicio />

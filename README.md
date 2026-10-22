@@ -76,6 +76,13 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
+### Comparar meses (Inicio → Comparar meses)
+Pone dos meses lado a lado (por defecto este y el anterior): ventas, venta promedio por día, clientes,
+ticket promedio, unidades y, si se ven costos, ganancia, margen y mermas; con "Meses completos" y
+gastos cargados, también la ganancia real. "A la misma fecha" compara los mismos días (si el mes
+va en el día 20, del 1 al 20 de ambos). Muestra los cambios por categoría, los productos que más
+crecieron y bajaron, los nuevos y los que dejaron de venderse.
+
 ### Horarios de venta (Ventas → Horarios)
 Mapa de calor con el promedio de ventas (en $, clientes o unidades) por día de la semana y hora,
 de las últimas 4, 8 o 12 semanas, para todo o una categoría. Más oscuro = se vende más. Resume la

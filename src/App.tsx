@@ -11,6 +11,7 @@ import { SesionProvider, useSesion, type Permiso } from './sesion/SesionProvider
 const cargar = <T extends Record<string, unknown>, K extends keyof T>(importar: () => Promise<T>, nombre: K) =>
   lazy(() => importar().then((m) => ({ default: m[nombre] as React.ComponentType })))
 
+const Comparar = cargar(() => import('./paginas/inicio/Comparar'), 'Comparar')
 const Ventas = cargar(() => import('./paginas/ventas/Ventas'), 'Ventas')
 const MapaCalor = cargar(() => import('./paginas/ventas/MapaCalor'), 'MapaCalor')
 const Importar = cargar(() => import('./paginas/ventas/Importar'), 'Importar')
@@ -66,6 +67,7 @@ function Rutas() {
     <Routes>
       <Route element={<Marco />}>
         <Route index element={<Inicio />} />
+        <Route path="comparar" element={<Con permiso="ver_ventas"><Comparar /></Con>} />
         <Route path="ventas" element={<Con permiso="ver_ventas"><Ventas /></Con>} />
         <Route path="ventas/horarios" element={<Con permiso="ver_ventas"><MapaCalor /></Con>} />
         <Route path="ventas/importar" element={<Con permiso="importar_ventas"><Importar /></Con>} />
