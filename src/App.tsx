@@ -35,6 +35,7 @@ const Exportar = cargar(() => import('./paginas/exportar/Exportar'), 'Exportar')
 const Respaldo = cargar(() => import('./paginas/Respaldo'), 'Respaldo')
 const Finanzas = cargar(() => import('./paginas/finanzas/Finanzas'), 'Finanzas')
 const Iva = cargar(() => import('./paginas/finanzas/Iva'), 'Iva')
+const Insumos = cargar(() => import('./paginas/finanzas/Insumos'), 'Insumos')
 const Pedidos = cargar(() => import('./paginas/pedidos/Pedidos'), 'Pedidos')
 const PedidoDetalle = cargar(() => import('./paginas/pedidos/PedidoDetalle'), 'PedidoDetalle')
 
@@ -86,6 +87,7 @@ function Rutas() {
         <Route path="mas/respaldo" element={<SoloDueno><Respaldo /></SoloDueno>} />
         <Route path="finanzas" element={<Con permiso="gestionar_finanzas"><Finanzas /></Con>} />
         <Route path="finanzas/iva" element={<Con permiso="gestionar_finanzas"><Iva /></Con>} />
+        <Route path="finanzas/insumos" element={<Con permiso="gestionar_finanzas"><Insumos /></Con>} />
         <Route path="pedidos" element={<Con permiso="gestionar_pedidos"><Pedidos /></Con>} />
         <Route path="pedidos/:id" element={<Con permiso="gestionar_pedidos"><PedidoDetalle /></Con>} />
         <Route path="*" element={<Navigate to="/" replace />} />

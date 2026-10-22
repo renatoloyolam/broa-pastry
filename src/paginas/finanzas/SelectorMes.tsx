@@ -3,6 +3,7 @@ import { moverMes, nombreMes } from '../../lib/finanzas'
 export const PESTANAS_FINANZAS = [
   { a: '/finanzas', texto: 'Resumen', fin: true },
   { a: '/finanzas/iva', texto: 'IVA' },
+  { a: '/finanzas/insumos', texto: 'Insumos' },
 ]
 
 /** ‹ octubre 2026 › — permite llegar hasta el mes siguiente al actual. */

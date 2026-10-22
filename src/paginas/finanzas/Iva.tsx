@@ -9,6 +9,7 @@ import {
   decodificar,
   leerRegistroCompras,
   signo,
+  sinIva,
   TIPOS_DOC,
   type CategoriaCompra,
   type Compra,
@@ -284,14 +285,16 @@ function Compras({ d, recargar }: { d: DatosIva; recargar: () => Promise<void> }
   )
 }
 
-function FormCompra({
+export function FormCompra({
   mes,
   compra,
+  tipoInicial = 'Factura',
   alTerminar,
   alBorrar,
 }: {
   mes: string
   compra?: Compra
+  tipoInicial?: TipoDoc
   alTerminar: () => Promise<void>
   alBorrar?: () => void
 }) {
@@ -299,9 +302,9 @@ function FormCompra({
   const fin = sumarDias(moverMes(mes, 1), -1)
   const [fecha, setFecha] = useState(compra?.fecha ?? (hoy.slice(0, 7) === mes.slice(0, 7) ? hoy : mes))
   const [proveedor, setProveedor] = useState(compra?.proveedor ?? '')
-  const [tipo, setTipo] = useState<TipoDoc>(compra?.tipo_doc ?? 'Factura')
+  const [tipo, setTipo] = useState<TipoDoc>(compra?.tipo_doc ?? tipoInicial)
   const [folio, setFolio] = useState(compra?.folio ?? '')
-  const [neto, setNeto] = useState(compra ? numero(compra.neto) : '')
+  const [neto, setNeto] = useState(compra ? numero(compra.neto + compra.exento) : '')
   const [iva, setIva] = useState(compra ? numero(compra.iva) : '')
   const [categoria, setCategoria] = useState<CategoriaCompra>(compra?.categoria ?? 'Insumos')
   const [error, setError] = useState('')
@@ -311,7 +314,7 @@ function FormCompra({
   function cambiarNeto(t: string) {
     setNeto(t)
     const n = leerNumero(t)
-    if (n != null && tipo !== 'Factura exenta') setIva(numero(Math.round(n * 0.19)))
+    if (n != null && !sinIva(tipo)) setIva(numero(Math.round(n * 0.19)))
   }
 
   async function guardar() {
@@ -321,7 +324,7 @@ function FormCompra({
     if (!proveedor.trim()) return setError('Escribe el proveedor.')
     if (n == null || n < 0) return setError('Escribe el monto neto (sin IVA).')
     if (i == null || i < 0) return setError('Revisa el IVA.')
-    const exenta = tipo === 'Factura exenta'
+    const exenta = sinIva(tipo)
     const fila = {
       fecha: fecha || null,
       proveedor: proveedor.trim(),
@@ -339,6 +342,10 @@ function FormCompra({
       : await supabase.from('compras').insert({ ...fila, periodo: mes })
     setGuardando(false)
     if (error) return setError(error.code === '23505' ? 'Ese documento ya está cargado.' : mensajeError(error))
+    // Si cambió la categoría de un proveedor con RUT, se recuerda para sus otros documentos
+    if (compra?.rut && categoria !== compra.categoria && categoria !== 'Por clasificar') {
+      await supabase.rpc('clasificar_proveedor', { p_rut: compra.rut, p_nombre: fila.proveedor, p_categoria: categoria })
+    }
     await alTerminar()
   }
 
@@ -355,17 +362,24 @@ function FormCompra({
       </div>
       <Campo etiqueta="Fecha" type="date" value={fecha} min={mes} max={fin} onChange={(e) => setFecha(e.target.value)} />
       <div className="grid grid-cols-2 gap-2">
-        <Campo etiqueta="Neto (sin IVA)" inputMode="numeric" value={neto} onChange={(e) => cambiarNeto(e.target.value)} placeholder="$" />
+        <Campo
+          etiqueta={tipo === 'Boleta' ? 'Total pagado' : tipo === 'Factura exenta' ? 'Monto exento' : 'Neto (sin IVA)'}
+          inputMode="numeric"
+          value={neto}
+          onChange={(e) => cambiarNeto(e.target.value)}
+          placeholder="$"
+        />
         <Campo
           etiqueta="IVA"
           inputMode="numeric"
-          value={tipo === 'Factura exenta' ? '0' : iva}
-          disabled={tipo === 'Factura exenta'}
+          value={sinIva(tipo) ? '0' : iva}
+          disabled={sinIva(tipo)}
           onChange={(e) => setIva(e.target.value)}
           placeholder="$"
         />
       </div>
       <Selector etiqueta="Categoría" value={categoria} onChange={(e) => setCategoria(e.target.value as CategoriaCompra)}>
+        {categoria === 'Por clasificar' && <option>Por clasificar</option>}
         {CATEGORIAS_COMPRA.map((c) => (
           <option key={c}>{c}</option>
         ))}

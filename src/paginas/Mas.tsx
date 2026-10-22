@@ -45,7 +45,7 @@ export function Mas() {
       </Grupo>
       {puede('gestionar_finanzas') && (
         <Grupo>
-          <Fila a="/finanzas" titulo="Finanzas del mes" detalle="Gastos fijos, meta, ganancia real e IVA" />
+          <Fila a="/finanzas" titulo="Finanzas del mes" detalle="Gastos, meta, ganancia real, IVA e insumos" />
         </Grupo>
       )}
       {puede('gestionar_pedidos') && (

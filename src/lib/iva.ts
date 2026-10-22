@@ -3,10 +3,10 @@
 import { normalizar } from './importador'
 import { moverMes } from './finanzas'
 
-export const TIPOS_DOC = ['Factura', 'Factura exenta', 'Factura de compra', 'Nota de crédito', 'Nota de débito', 'Importación', 'Otro'] as const
+export const TIPOS_DOC = ['Factura', 'Factura exenta', 'Factura de compra', 'Nota de crédito', 'Nota de débito', 'Importación', 'Boleta', 'Otro'] as const
 export type TipoDoc = (typeof TIPOS_DOC)[number]
 export const CATEGORIAS_COMPRA = ['Insumos', 'Packaging', 'Gastos del local', 'Equipos', 'Otros'] as const
-export type CategoriaCompra = (typeof CATEGORIAS_COMPRA)[number]
+export type CategoriaCompra = (typeof CATEGORIAS_COMPRA)[number] | 'Por clasificar'
 
 export interface Compra {
   id: number
@@ -35,6 +35,9 @@ export interface DatosIva {
   cobrado: { ventas: number; abonos: number; sin_boleta: number }
   compras: Compra[]
 }
+
+/** Documentos sin IVA recuperable: el monto es el total pagado. */
+export const sinIva = (t: TipoDoc) => t === 'Factura exenta' || t === 'Boleta'
 
 /** Las notas de crédito restan; el resto suma. */
 export const signo = (t: TipoDoc) => (t === 'Nota de crédito' ? -1 : 1)

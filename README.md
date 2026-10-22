@@ -62,6 +62,10 @@ pedidos **no** se suman otra vez a las ventas.
   las facturas de compra − remanente del mes anterior, más el PPM. Las facturas se suben con el CSV
   del Registro de Compras del SII (sii.cl → Registro de compras y ventas → Compras → Descargar
   detalles) o se agregan a mano. Subirlo dos veces no duplica. Es una estimación: declara el contador.
+- **Pestaña Insumos:** compara lo comprado en Insumos y Packaging (facturas del SII + boletas
+  anotadas a mano) con lo que se usó según los costos (ventas y mermas, sin mano de obra). Si
+  compras mucho más de lo usado: stock, mermas sin anotar, pérdidas o recetas con costo bajo.
+  Los proveedores nuevos del SII quedan "Por clasificar"; al clasificarlos se recuerda para siempre.
 
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.
