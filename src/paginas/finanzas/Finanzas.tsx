@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useConfirmar } from '../../componentes/Confirmar'
-import { Aviso, Boton, Campo, Encabezado, Interruptor, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Campo, Encabezado, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import {
   calcularFinanzas,
   CATEGORIAS_GASTO,
   gastosPorCategoria,
-  moverMes,
   nombreMes,
   proximosPagos,
   type CategoriaGasto,
@@ -15,6 +14,7 @@ import {
 import { decimal, fechaDia, hoyIso, leerNumero, numero, pesos, porcentaje } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { BarraMeta } from './BarraMeta'
+import { PESTANAS_FINANZAS, SelectorMes } from './SelectorMes'
 
 const primeroDelMes = (iso: string) => `${iso.slice(0, 7)}-01`
 
@@ -39,26 +39,11 @@ export function Finanzas() {
     cargar()
   }, [cargar])
 
-  const titulo = nombreMes(mes)
-
   return (
     <>
       <Encabezado titulo="Finanzas" volver="/mas" />
-      <div className="mb-4 flex items-center justify-between rounded-2xl border border-borde bg-superficie">
-        <button type="button" aria-label="Mes anterior" onClick={() => setMes(moverMes(mes, -1))} className="h-12 w-14 text-2xl text-primario">
-          ‹
-        </button>
-        <span className="font-semibold first-letter:uppercase">{titulo}</span>
-        <button
-          type="button"
-          aria-label="Mes siguiente"
-          disabled={mes > mesActual}
-          onClick={() => setMes(moverMes(mes, 1))}
-          className="h-12 w-14 text-2xl text-primario disabled:opacity-30"
-        >
-          ›
-        </button>
-      </div>
+      <Pestanas opciones={PESTANAS_FINANZAS} />
+      <SelectorMes mes={mes} mesActual={mesActual} onCambio={setMes} />
 
       {error && <Aviso>{error}</Aviso>}
       {!d && !error && <p className="py-10 text-center text-suave">Cargando…</p>}

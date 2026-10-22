@@ -58,6 +58,10 @@ pedidos **no** se suman otra vez a las ventas.
   Lo vendido sin costo cargado se estima con el promedio del mes.
 - Comisiones de tarjeta: se configuran al final de la pantalla (% débito y crédito).
 - La ve el Dueño; la Administradora solo si se activa "Finanzas del mes" en Permisos (incluye sueldos).
+- **Pestaña IVA:** IVA estimado del F29 = IVA de lo cobrado en influye (ventas y abonos) − IVA de
+  las facturas de compra − remanente del mes anterior, más el PPM. Las facturas se suben con el CSV
+  del Registro de Compras del SII (sii.cl → Registro de compras y ventas → Compras → Descargar
+  detalles) o se agregan a mano. Subirlo dos veces no duplica. Es una estimación: declara el contador.
 
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.
