@@ -12,6 +12,7 @@ const cargar = <T extends Record<string, unknown>, K extends keyof T>(importar: 
   lazy(() => importar().then((m) => ({ default: m[nombre] as React.ComponentType })))
 
 const Ventas = cargar(() => import('./paginas/ventas/Ventas'), 'Ventas')
+const MapaCalor = cargar(() => import('./paginas/ventas/MapaCalor'), 'MapaCalor')
 const Importar = cargar(() => import('./paginas/ventas/Importar'), 'Importar')
 const CatalogoProvider = cargar(() => import('./lib/catalogo'), 'CatalogoProvider')
 const ProductosLista = cargar(() => import('./paginas/productos/Productos'), 'ProductosLista')
@@ -66,6 +67,7 @@ function Rutas() {
       <Route element={<Marco />}>
         <Route index element={<Inicio />} />
         <Route path="ventas" element={<Con permiso="ver_ventas"><Ventas /></Con>} />
+        <Route path="ventas/horarios" element={<Con permiso="ver_ventas"><MapaCalor /></Con>} />
         <Route path="ventas/importar" element={<Con permiso="importar_ventas"><Importar /></Con>} />
         <Route path="productos" element={<Con permiso="ver_costos"><CatalogoProvider /></Con>}>
           <Route index element={<ProductosLista />} />

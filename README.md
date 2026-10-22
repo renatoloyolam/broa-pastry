@@ -76,6 +76,12 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
+### Horarios de venta (Ventas → Horarios)
+Mapa de calor con el promedio de ventas (en $, clientes o unidades) por día de la semana y hora,
+de las últimas 4, 8 o 12 semanas, para todo o una categoría. Más oscuro = se vende más. Resume la
+hora más fuerte, el mejor y el peor día, cuánto se vende antes y después de las 15:00, y las horas
+flojas. Tocando un cuadro se ve su promedio. Lo ven todos los usuarios (no muestra costos).
+
 ### Simulador de precios (Productos → Mapa → Simulador, o "Simular precio" en cada producto)
 Prueba un precio nuevo (o un costo nuevo) y ve cómo cambia la ganancia del mes, usando lo vendido en
 los últimos 90 días. Indica cuánto podrían bajar las ventas sin perder ("aunque vendas 25% menos,

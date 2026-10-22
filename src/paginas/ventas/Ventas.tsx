@@ -67,7 +67,11 @@ export function Ventas() {
 
   return (
     <>
-      <Encabezado titulo="Ventas" />
+      <Encabezado titulo="Ventas">
+        <Link to="/ventas/horarios" className="text-sm font-semibold text-primario">
+          Horarios
+        </Link>
+      </Encabezado>
 
       {puede('importar_ventas') && (
         <Link
