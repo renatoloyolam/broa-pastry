@@ -49,6 +49,16 @@ pedidos **no** se suman otra vez a las ventas.
   productos y opciones con su costo actual), completa las columnas de color durazno **sin IVA** y
   súbela. La app muestra qué cambia antes de guardar. Las filas "Receta" se editan en la app.
 
+### Finanzas del mes (Más → Finanzas del mes)
+- **Gastos del mes:** arriendo, sueldos, luz, contador… con su día de pago. Los que "se repiten"
+  se copian solos al mes siguiente; solo ajustas los que cambian. Marca "Pagar" cuando los pagues.
+- **Meta:** cuánto hay que vender (con IVA, como en la caja) para cubrir todos los gastos, cuánto
+  falta y cuánto vender por día abierto (descuenta los días cerrados de Alertas).
+- **Resultado real:** ventas sin IVA − costo de productos − mermas − comisiones de tarjeta − gastos.
+  Lo vendido sin costo cargado se estima con el promedio del mes.
+- Comisiones de tarjeta: se configuran al final de la pantalla (% débito y crédito).
+- La ve el Dueño; la Administradora solo si se activa "Finanzas del mes" en Permisos (incluye sueldos).
+
 ### Exportar (Más → Exportar reportes)
 Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos exporta sin costos.
 

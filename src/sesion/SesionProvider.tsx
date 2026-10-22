@@ -13,6 +13,7 @@ export type Permiso =
   | 'exportar'
   | 'editar_configuracion'
   | 'gestionar_usuarios'
+  | 'gestionar_finanzas'
 
 export interface Perfil {
   id: string

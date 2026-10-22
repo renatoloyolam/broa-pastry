@@ -43,6 +43,11 @@ export function Mas() {
       <Grupo>
         <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Face ID y contraseña" />
       </Grupo>
+      {puede('gestionar_finanzas') && (
+        <Grupo>
+          <Fila a="/finanzas" titulo="Finanzas del mes" detalle="Gastos fijos, meta de ventas y ganancia real" />
+        </Grupo>
+      )}
       {puede('gestionar_pedidos') && (
         <Grupo>
           <Fila a="/pedidos" titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />
@@ -104,6 +109,7 @@ type Permisos = {
   gestionar_pedidos: boolean
   exportar: boolean
   editar_configuracion: boolean
+  gestionar_finanzas: boolean
 }
 
 const TEXTO_PERMISO: Record<keyof Permisos, [string, string]> = {
@@ -114,6 +120,7 @@ const TEXTO_PERMISO: Record<keyof Permisos, [string, string]> = {
   gestionar_pedidos: ['Pedidos de tortas', 'Crear pedidos y registrar abonos'],
   exportar: ['Exportar reportes', 'Descargar Excel y PDF'],
   editar_configuracion: ['Cambiar configuración', 'IVA, turnos y tiempo de cierre de sesión'],
+  gestionar_finanzas: ['Finanzas del mes', 'Gastos fijos (incluye sueldos), meta de ventas y ganancia real. Requiere ver costos'],
 }
 
 export function PermisosAdmin() {
@@ -123,7 +130,7 @@ export function PermisosAdmin() {
   useEffect(() => {
     supabase
       .from('permisos_admin')
-      .select('ver_costos, editar_catalogo, importar_ventas, registrar_mermas, gestionar_pedidos, exportar, editar_configuracion')
+      .select('ver_costos, editar_catalogo, importar_ventas, registrar_mermas, gestionar_pedidos, exportar, editar_configuracion, gestionar_finanzas')
       .single()
       .then(({ data, error }) => (error ? setError(mensajeError(error)) : setPermisos(data)))
   }, [])
