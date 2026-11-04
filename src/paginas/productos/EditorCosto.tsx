@@ -202,9 +202,10 @@ export function EditorCosto({ productoId, opcionId, costo, alGuardar }: Props) {
               <button
                 type="button"
                 onClick={() => setAdicionales([...adicionales, { concepto: '', monto: '' }])}
-                className="min-h-11 text-sm font-semibold text-primario"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primario"
               >
-                + Agregar costo adicional
+                <ICONOS.agregar className="h-4 w-4 shrink-0" aria-hidden />
+                Agregar costo adicional
               </button>
             )}
           </div>

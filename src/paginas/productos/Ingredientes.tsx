@@ -24,9 +24,10 @@ export function IngredientesLista() {
       {puede('editar_catalogo') && (
         <Link
           to="/productos/ingredientes/nuevo"
-          className="mb-3 flex min-h-12 items-center justify-center rounded-2xl bg-primario font-semibold text-primario-texto"
+          className="mb-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-primario font-semibold text-primario-texto"
         >
-          + Nuevo ingrediente
+          <ICONOS.agregar className="h-5 w-5 shrink-0" aria-hidden />
+          Nuevo ingrediente
         </Link>
       )}
       {ingredientes.length > 5 && (

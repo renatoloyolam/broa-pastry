@@ -24,9 +24,10 @@ export function RecetasLista() {
       {puede('editar_catalogo') && (
         <Link
           to="/productos/recetas/nueva"
-          className="mb-3 flex min-h-12 items-center justify-center rounded-2xl bg-primario font-semibold text-primario-texto"
+          className="mb-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-primario font-semibold text-primario-texto"
         >
-          + Nueva receta
+          <ICONOS.agregar className="h-5 w-5 shrink-0" aria-hidden />
+          Nueva receta
         </Link>
       )}
       {recetas.length > 5 && (
@@ -84,6 +85,8 @@ interface ItemForm {
   unidad: Unidad
 }
 
+const ITEM_VACIO: ItemForm = { tipo: 'ingrediente', refId: '', cantidad: '', unidad: 'g' }
+
 export function RecetaEditor() {
   const { id } = useParams()
   const esNueva = id === 'nueva'
@@ -99,7 +102,7 @@ export function RecetaEditor() {
   const [unidad, setUnidad] = useState<Unidad>('un')
   const [esBase, setEsBase] = useState(false)
   const [notas, setNotas] = useState('')
-  const [items, setItems] = useState<ItemForm[]>([])
+  const [items, setItems] = useState<ItemForm[]>(esNueva ? [ITEM_VACIO] : [])
   const [adicionales, setAdicionales] = useState<{ concepto: string; monto: string }[]>([])
   const [listo, setListo] = useState(esNueva)
   const [error, setError] = useState('')
@@ -286,12 +289,11 @@ export function RecetaEditor() {
               const linea = calculo.lineas[i]
               return (
                 <Tarjeta key={i} className="space-y-2 p-3">
-                  <div className="flex gap-2">
+                  <div className="grid grid-cols-[8.25rem_minmax(0,1fr)] gap-2">
                     <Selector
                       aria-label="Tipo"
                       value={it.tipo}
                       disabled={!editable}
-                      className="w-32 shrink-0"
                       onChange={(e) => actualizarItem(i, { tipo: e.target.value as ItemForm['tipo'], refId: '' })}
                     >
                       <option value="ingrediente">Ingrediente</option>
@@ -322,7 +324,7 @@ export function RecetaEditor() {
                       ))}
                     </Selector>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-[5.5rem_6.5rem_minmax(0,1fr)_2.5rem] items-center gap-2">
                     <input
                       aria-label="Cantidad"
                       inputMode="decimal"
@@ -330,13 +332,12 @@ export function RecetaEditor() {
                       value={it.cantidad}
                       disabled={!editable}
                       onChange={(e) => actualizarItem(i, { cantidad: e.target.value })}
-                      className="min-h-12 w-28 rounded-xl border border-borde bg-superficie px-3 text-right"
+                      className="min-h-12 w-full rounded-xl border border-borde bg-superficie px-3 text-right"
                     />
                     <Selector
                       aria-label="Unidad"
                       value={it.unidad}
                       disabled={!editable}
-                      className="w-28"
                       onChange={(e) => actualizarItem(i, { unidad: e.target.value as Unidad })}
                     >
                       {UNIDADES.map((u) => (
@@ -345,7 +346,7 @@ export function RecetaEditor() {
                         </option>
                       ))}
                     </Selector>
-                    <span className="cifra flex-1 text-right font-semibold">
+                    <span className="cifra min-w-0 text-right text-sm font-semibold">
                       {linea?.costo != null ? pesos(linea.costo) : '—'}
                     </span>
                     {editable && (
@@ -353,9 +354,9 @@ export function RecetaEditor() {
                         type="button"
                         aria-label="Quitar ingrediente"
                         onClick={() => setItems(items.filter((_, j) => j !== i))}
-                        className="h-12 w-10 shrink-0 rounded-xl text-xl text-suave active:bg-superficie-2"
+                        className="flex h-12 w-10 items-center justify-center rounded-xl text-suave active:bg-superficie-2"
                       >
-                        ×
+                        <ICONOS.borrar className="h-5 w-5" aria-hidden />
                       </button>
                     )}
                   </div>
@@ -367,10 +368,11 @@ export function RecetaEditor() {
           {editable && (
             <button
               type="button"
-              onClick={() => setItems([...items, { tipo: 'ingrediente', refId: '', cantidad: '', unidad: 'g' }])}
-              className="mt-2 min-h-11 text-sm font-semibold text-primario"
+              onClick={() => setItems([...items, ITEM_VACIO])}
+              className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primario"
             >
-              + Agregar ingrediente
+              <ICONOS.agregar className="h-4 w-4 shrink-0" aria-hidden />
+              Agregar ingrediente
             </button>
           )}
         </section>
@@ -415,9 +417,10 @@ export function RecetaEditor() {
             <button
               type="button"
               onClick={() => setAdicionales([...adicionales, { concepto: '', monto: '' }])}
-              className="mt-2 min-h-11 text-sm font-semibold text-primario"
+              className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-primario"
             >
-              + Agregar costo adicional
+              <ICONOS.agregar className="h-4 w-4 shrink-0" aria-hidden />
+              Agregar costo adicional
             </button>
           )}
         </section>
