@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useCatalogo, type Costo, type ModoCosto } from '../../lib/catalogo'
+import { esCostoIndirecto } from '../../lib/costeo'
 import { decimal, fecha, leerNumero, pesos } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
@@ -55,6 +56,9 @@ export function EditorCosto({ productoId, opcionId, costo, alGuardar }: Props) {
           ? 0
           : null
   const vistaPrevia = base == null ? null : base + sumaAdicionales
+  // La receta ya trae sus horas: la mano de obra del producto se contaría dos veces
+  const duplicaManoObra =
+    modo === 'receta' && !!receta && receta.horas_mano_obra + receta.horas_gif > 0 && adicionales.some((a) => esCostoIndirecto(a.concepto))
 
   async function guardar() {
     setError('')
@@ -210,6 +214,22 @@ export function EditorCosto({ productoId, opcionId, costo, alGuardar }: Props) {
             )}
           </div>
         </div>
+      )}
+
+      {duplicaManoObra && (
+        <Aviso tipo="error">
+          <p>Esta receta ya incluye horas de mano de obra y G.I.F. Con el costo adicional de arriba se contarían dos veces.</p>
+          {editable && (
+            <button
+              type="button"
+              onClick={() => setAdicionales(adicionales.filter((a) => !esCostoIndirecto(a.concepto)))}
+              className="mt-1 inline-flex min-h-11 items-center gap-1.5 font-semibold"
+            >
+              <ICONOS.borrar className="h-4 w-4 shrink-0" aria-hidden />
+              Quitar el costo adicional de mano de obra
+            </button>
+          )}
+        </Aviso>
       )}
 
       {modo && (

@@ -59,6 +59,13 @@ export interface Receta {
   notas: string | null
   costo_total: number | null
   costo_unitario: number | null
+  horas_mano_obra: number
+  horas_gif: number
+}
+
+export interface ValorHora {
+  mano_obra: number
+  gif: number
 }
 
 interface Datos {
@@ -69,6 +76,7 @@ interface Datos {
   adicionales: Adicional[]
   recetas: Receta[]
   ingredientes: (Ingrediente & { activo: boolean; actualizado_en: string })[]
+  valorHora: ValorHora
 }
 
 interface ContextoCatalogo extends Datos {
@@ -81,7 +89,7 @@ interface ContextoCatalogo extends Datos {
 }
 
 const Contexto = createContext<ContextoCatalogo | null>(null)
-const vacio: Datos = { categorias: [], productos: [], opciones: [], costos: [], adicionales: [], recetas: [], ingredientes: [] }
+const vacio: Datos = { categorias: [], productos: [], opciones: [], costos: [], adicionales: [], recetas: [], ingredientes: [], valorHora: { mano_obra: 0, gif: 0 } }
 
 /** Carga todo el catálogo una vez para las pantallas de Productos. */
 export function CatalogoProvider({ children }: { children?: ReactNode }) {
@@ -98,6 +106,7 @@ export function CatalogoProvider({ children }: { children?: ReactNode }) {
       supabase.from('costo_adicionales').select('*').order('id'),
       supabase.from('v_recetas').select('*').order('nombre'),
       supabase.from('ingredientes').select('*').order('nombre'),
+      supabase.from('valores_hora').select('mano_obra, gif').maybeSingle(),
     ])
     const fallo = r.find((x) => x.error)
     if (fallo) {
@@ -122,12 +131,18 @@ export function CatalogoProvider({ children }: { children?: ReactNode }) {
           rendimiento: Number(x.rendimiento),
           costo_total: x.costo_total == null ? null : Number(x.costo_total),
           costo_unitario: x.costo_unitario == null ? null : Number(x.costo_unitario),
+          horas_mano_obra: Number(x.horas_mano_obra),
+          horas_gif: Number(x.horas_gif),
         })),
         ingredientes: num<Datos['ingredientes'][number]>(r[6].data).map((i) => ({
           ...i,
           cantidad_compra: Number(i.cantidad_compra),
           precio_compra_neto: Number(i.precio_compra_neto),
         })),
+        valorHora: {
+          mano_obra: Number((r[7].data as ValorHora | null)?.mano_obra ?? 0),
+          gif: Number((r[7].data as ValorHora | null)?.gif ?? 0),
+        },
       })
     }
     setCargando(false)

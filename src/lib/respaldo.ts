@@ -30,6 +30,11 @@ export const TABLAS_RESPALDO: [tabla: string, orden: string][] = [
   ['pedidos', 'id'],
   ['pedido_abonos', 'id'],
   ['pedido_costos', 'pedido_id'],
+  ['valores_hora', 'id'],
+  ['gastos_meses', 'mes'],
+  ['gastos', 'id'],
+  ['compras', 'id'],
+  ['proveedores', 'rut'],
 ]
 
 const PAGINA = 1000

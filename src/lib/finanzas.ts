@@ -33,6 +33,8 @@ export interface DatosFinanzas {
   hoy: string
   divisor: number
   resumen: ResumenPanel
+  /** Parte del costo de lo vendido y de las mermas que es mano de obra y G.I.F. */
+  indirecto: { ventas: number; mermas: number }
   ultimo_dia: string | null
   dias_con_venta: number
   dias_cerrado: number[]
@@ -71,12 +73,14 @@ export function calcularFinanzas(d: DatosFinanzas) {
   const ventas = r.ventas
   const ventasNetas = ventas / d.divisor
   const iva = ventas - ventasNetas
-  const costoCargado = r.costo ?? 0
+  // El costo de cada producto incluye mano de obra y G.I.F. (para fijar precios), pero aquí no se
+  // restan: los sueldos y gastos reales ya están en "Gastos del mes" y se contarían dos veces.
+  const costoCargado = Math.max(0, (r.costo ?? 0) - d.indirecto.ventas)
   // Lo vendido sin costo cargado se estima con la proporción de costo del resto del mes.
   const proporcionCosto = r.ventas_netas_costeadas ? costoCargado / r.ventas_netas_costeadas : null
   const ventasSinCosto = r.ventas_sin_costo ?? 0
   const costoEstimado = proporcionCosto != null ? (ventasSinCosto / d.divisor) * proporcionCosto : 0
-  const mermas = r.mermas ?? 0
+  const mermas = Math.max(0, (r.mermas ?? 0) - d.indirecto.mermas)
   const comisiones = d.comisiones
   // Lo que queda de las ventas para pagar los gastos fijos
   const contribucion = ventasNetas - costoCargado - costoEstimado - mermas - comisiones

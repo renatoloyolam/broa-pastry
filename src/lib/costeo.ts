@@ -104,3 +104,15 @@ export function margenReferencia(precioConIva: number | null | undefined, costoN
   const neto = precioConIva / (1 + tasaIva)
   return (neto - costoNeto) / neto
 }
+
+/** ¿Este costo adicional es mano de obra o G.I.F.? Ej.: "Mano de obra y gastos (planilla)". */
+export function esCostoIndirecto(concepto: string) {
+  return /mano de obra|g\.?i\.?f\.?($|[^a-z])|gastos indirectos/i.test(concepto)
+}
+
+/** Costo de las horas de una tanda: horas × valor hora, de mano de obra y de G.I.F. */
+export function costoHoras(horasManoObra: number, horasGif: number, valor: { mano_obra: number; gif: number }) {
+  const manoObra = horasManoObra * valor.mano_obra
+  const gif = horasGif * valor.gif
+  return { manoObra, gif, total: manoObra + gif }
+}

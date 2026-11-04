@@ -124,14 +124,14 @@ function Contenido({ d, recargar }: { d: DatosFinanzas; recargar: () => Promise<
           <Fila etiqueta="Ventas (con IVA)" valor={f.ventas} />
           <Fila etiqueta="IVA de las ventas" valor={-f.iva} suave />
           <Fila etiqueta="Ventas sin IVA" valor={f.ventasNetas} fuerte linea />
-          <Fila etiqueta="Costo de los productos" valor={-f.costoCargado} />
+          <Fila etiqueta="Ingredientes y packaging de lo vendido" valor={-f.costoCargado} />
           {f.costoEstimado > 0 && (
             <Fila etiqueta="Costo estimado (productos sin costo cargado)" valor={-f.costoEstimado} suave />
           )}
           <Fila etiqueta="Mermas" valor={-f.mermas} />
           <Fila etiqueta="Comisiones de tarjeta" valor={-f.comisiones} />
           <Fila etiqueta="Queda para pagar gastos" valor={f.contribucion} fuerte linea extra={porcentaje(f.tasaContribucion, 0)} />
-          <Fila etiqueta="Gastos fijos del mes" valor={-f.gastos} />
+          <Fila etiqueta="Gastos del mes (sueldos, arriendo…)" valor={-f.gastos} />
           <div className="mt-2 flex items-baseline justify-between border-t-2 border-texto/20 pt-2">
             <span className="text-base font-semibold">Ganancia real</span>
             <span className={`cifra text-2xl font-bold ${f.ganancia < 0 ? 'text-peligro' : 'text-exito'}`}>
@@ -143,6 +143,13 @@ function Contenido({ d, recargar }: { d: DatosFinanzas; recargar: () => Promise<
           )}
         </Tarjeta>
         <div className="mt-2 space-y-1 text-xs text-suave">
+          {d.gastos.length === 0 && (
+            <Aviso tipo="info">Aún sin gastos del mes: esta ganancia todavía no descuenta sueldos ni arriendo.</Aviso>
+          )}
+          <p>
+            La mano de obra y los G.I.F. de cada producto sirven para fijar precios, pero no se restan aquí: lo real son los sueldos y gastos
+            que anotas abajo.
+          </p>
           {f.ventasSinCosto > 0 && (
             <p>
               {pesos(f.ventasSinCosto)} se vendieron en productos sin costo cargado: su costo se estimó con el promedio del mes.

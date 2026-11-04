@@ -21,6 +21,7 @@ const base: DatosFinanzas = {
     unidades_sin_costo: 100,
     mermas: 100_000,
   },
+  indirecto: { ventas: 0, mermas: 0 },
   ultimo_dia: '2026-10-10',
   dias_con_venta: 9,
   dias_cerrado: [7],
@@ -44,6 +45,15 @@ describe('finanzas del mes', () => {
     expect(f.ganancia).toBeCloseTo(500_000)
     expect(f.pagado).toBe(2_000_000)
     expect(f.pendiente).toBe(2_000_000)
+  })
+
+  it('no resta dos veces la mano de obra y los G.I.F.: esos van en los gastos reales', () => {
+    const f = calcularFinanzas({ ...base, indirecto: { ventas: 1_000_000, mermas: 20_000 } })
+    expect(f.costoCargado).toBe(3_500_000)
+    expect(f.mermas).toBe(80_000)
+    // lo sin costo se estima con la nueva proporción: 3.500.000 / 9.000.000 de 1.000.000
+    expect(f.costoEstimado).toBeCloseTo(388_889, 0)
+    expect(f.contribucion).toBeCloseTo(10_000_000 - 3_500_000 - 388_888.9 - 80_000 - 400_000, 0)
   })
 
   it('meta = gastos ÷ % que queda, expresada con IVA; faltante por día abierto', () => {

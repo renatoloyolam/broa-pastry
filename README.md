@@ -39,6 +39,13 @@ día y se descuentan de la ganancia. El **Reporte** las muestra por motivo y por
 saldo por cobrar y la ganancia esperada. El abono y el saldo se cobran en influye, por eso los
 pedidos **no** se suman otra vez a las ventas.
 
+### Mano de obra en recetas
+En cada receta se escriben las **horas de mano de obra y de G.I.F.**: el total de la tanda, sumando todas
+las etapas, sin importar cuántas personas participen. La app multiplica por el valor hora y divide por
+lo que rinde. El valor hora es uno solo y se cambia en Productos → Recetas (al cambiarlo se recalcula todo).
+Si conectas un producto que traía "Mano de obra y gastos (planilla)", la app avisa para quitarla y no
+contarla dos veces. En Finanzas, el Resultado real no resta esa parte: resta los sueldos y gastos reales.
+
 ### Costos
 - **Productos**: costo de cada producto y de cada opción (sabor, tamaño, leche…).
   Se puede escribir a mano o calcular con **Recetas** e **Ingredientes**.

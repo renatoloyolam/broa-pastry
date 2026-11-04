@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { costoReceta, margenReferencia, precioPorUnidadBase, precioPorUnidadMayor, type Ingrediente, type Unidad } from './costeo'
+import { costoHoras, costoReceta, esCostoIndirecto, margenReferencia, precioPorUnidadBase, precioPorUnidadMayor, type Ingrediente, type Unidad } from './costeo'
 
 // Mismo caso que supabase/tests/costos_fase2.sql, para que app y base coincidan.
 const ing: Ingrediente[] = [
@@ -64,5 +64,22 @@ describe('margen de referencia', () => {
   it('sin precio o sin costo no hay margen', () => {
     expect(margenReferencia(0, 500)).toBeNull()
     expect(margenReferencia(2380, null)).toBeNull()
+  })
+})
+
+describe('mano de obra por horas', () => {
+  it('calcula horas × valor hora, igual que la planilla', () => {
+    const c = costoHoras(5, 1, { mano_obra: 4438.87, gif: 3188.19 })
+    expect(c.manoObra).toBeCloseTo(22194.35)
+    expect(c.gif).toBeCloseTo(3188.19)
+    expect(c.total).toBeCloseTo(25382.54)
+  })
+
+  it('reconoce los adicionales que ya son mano de obra o G.I.F.', () => {
+    expect(esCostoIndirecto('Mano de obra y gastos (planilla)')).toBe(true)
+    expect(esCostoIndirecto('G.I.F.')).toBe(true)
+    expect(esCostoIndirecto('gif')).toBe(true)
+    expect(esCostoIndirecto('Caja')).toBe(false)
+    expect(esCostoIndirecto('Otros costos')).toBe(false)
   })
 })

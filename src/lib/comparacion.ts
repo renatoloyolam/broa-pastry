@@ -60,7 +60,7 @@ export function indicadores(A: DatosPanel, B: DatosPanel, diasA: number, diasB: 
   ]
   if (A.ver_costos && B.ver_costos) {
     lista.push(
-      fila('ganancia', 'Ganancia (antes de gastos)', gA, gB, 'pesos'),
+      fila('ganancia', 'Ganancia según costos', gA, gB, 'pesos'),
       fila('margen', 'Margen', margen({ ...ra, mermas: ra.mermas }), margen({ ...rb, mermas: rb.mermas }), 'porcentaje'),
       fila('mermas', 'Mermas', ra.mermas, rb.mermas, 'pesos', true),
     )

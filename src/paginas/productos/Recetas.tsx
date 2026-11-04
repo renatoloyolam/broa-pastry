@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useCatalogo } from '../../lib/catalogo'
-import { costoReceta, UNIDADES, type ItemReceta, type Unidad } from '../../lib/costeo'
+import { costoHoras, costoReceta, esCostoIndirecto, UNIDADES, type ItemReceta, type Unidad } from '../../lib/costeo'
 import { decimal, leerNumero, pesos } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
-import { Aviso, Boton, Campo, Encabezado, EstadoVacio, Insignia, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Campo, Encabezado, EstadoVacio, IconoCirculo, Insignia, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import { PESTANAS_CATALOGO } from './Productos'
 import { useConfirmar } from '../../componentes/Confirmar'
 import { ICONOS } from '../../componentes/iconos'
@@ -39,6 +39,7 @@ export function RecetasLista() {
           className="mb-3 min-h-12 w-full rounded-xl border border-borde bg-superficie px-4"
         />
       )}
+      <ValorHoraTarjeta />
       {!cargando && recetas.length === 0 && (
         <EstadoVacio icono={ICONOS.recetas} titulo="Aún no hay recetas">
           Crea una receta con sus ingredientes y cuánto rinde (ej.: 1 receta = 12 brownies). Para usar recetas, primero
@@ -78,6 +79,88 @@ export function RecetasLista() {
   )
 }
 
+/** El valor de una hora de mano de obra y de G.I.F.: uno solo para toda la app. */
+function ValorHoraTarjeta() {
+  const { valorHora, cargando, recargar } = useCatalogo()
+  const { puede } = useSesion()
+  const confirmar = useConfirmar()
+  const editable = puede('editar_catalogo')
+  const [manoObra, setManoObra] = useState('')
+  const [gif, setGif] = useState('')
+  const [abierta, setAbierta] = useState(false)
+  const [guardando, setGuardando] = useState(false)
+  const [error, setError] = useState('')
+  const [ok, setOk] = useState(false)
+
+  if (cargando) return null
+
+  function abrir() {
+    setManoObra(decimal(valorHora.mano_obra))
+    setGif(decimal(valorHora.gif))
+    setError('')
+    setOk(false)
+    setAbierta(true)
+  }
+
+  async function guardar() {
+    const mo = leerNumero(manoObra)
+    const g = leerNumero(gif)
+    if (mo == null || mo < 0 || g == null || g < 0) return setError('Escribe los valores en pesos, por ejemplo 4.439.')
+    if (
+      !(await confirmar({
+        mensaje: 'Se recalculan todas las recetas que usan horas y los productos conectados a ellas. El nuevo costo rige desde hoy. ¿Continuar?',
+        accion: 'Cambiar valor hora',
+      }))
+    )
+      return
+    setGuardando(true)
+    setError('')
+    const { error } = await supabase.from('valores_hora').update({ mano_obra: mo, gif: g }).eq('id', true)
+    setGuardando(false)
+    if (error) return setError(mensajeError(error))
+    await recargar()
+    setAbierta(false)
+    setOk(true)
+  }
+
+  return (
+    <Tarjeta className="mb-3 space-y-3">
+      <div className="flex items-center gap-3">
+        <IconoCirculo icono={ICONOS.horarios} />
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold">Valor hora</p>
+          <p className="text-sm text-suave">
+            Mano de obra <span className="cifra">{pesos(valorHora.mano_obra)}</span> · G.I.F. <span className="cifra">{pesos(valorHora.gif)}</span>
+          </p>
+        </div>
+        {editable && !abierta && (
+          <button type="button" onClick={abrir} className="min-h-11 shrink-0 px-2 text-sm font-semibold text-primario">
+            Cambiar
+          </button>
+        )}
+      </div>
+      {abierta && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <Campo etiqueta="Mano de obra, por hora" inputMode="decimal" value={manoObra} onChange={(e) => setManoObra(e.target.value)} />
+            <Campo etiqueta="G.I.F., por hora" inputMode="decimal" value={gif} onChange={(e) => setGif(e.target.value)} />
+          </div>
+          {error && <Aviso>{error}</Aviso>}
+          <div className="grid grid-cols-2 gap-2">
+            <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => setAbierta(false)}>
+              Cancelar
+            </Boton>
+            <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
+              Guardar
+            </Boton>
+          </div>
+        </div>
+      )}
+      {ok && <Aviso tipo="ok">Valor hora actualizado. Las recetas se recalcularon.</Aviso>}
+    </Tarjeta>
+  )
+}
+
 interface ItemForm {
   tipo: 'ingrediente' | 'receta'
   refId: number | ''
@@ -91,7 +174,7 @@ export function RecetaEditor() {
   const { id } = useParams()
   const esNueva = id === 'nueva'
   const navegar = useNavigate()
-  const { recetas, ingredientes, productos, opciones, costos, recargar, cargando } = useCatalogo()
+  const { recetas, ingredientes, productos, opciones, costos, adicionales: adicionalesCosto, valorHora, recargar, cargando } = useCatalogo()
   const { puede } = useSesion()
   const editable = puede('editar_catalogo')
   const confirmar = useConfirmar()
@@ -102,6 +185,8 @@ export function RecetaEditor() {
   const [unidad, setUnidad] = useState<Unidad>('un')
   const [esBase, setEsBase] = useState(false)
   const [notas, setNotas] = useState('')
+  const [horasManoObra, setHorasManoObra] = useState('')
+  const [horasGif, setHorasGif] = useState('')
   const [items, setItems] = useState<ItemForm[]>(esNueva ? [ITEM_VACIO] : [])
   const [adicionales, setAdicionales] = useState<{ concepto: string; monto: string }[]>([])
   const [listo, setListo] = useState(esNueva)
@@ -123,6 +208,8 @@ export function RecetaEditor() {
       setUnidad(receta.unidad_rendimiento)
       setEsBase(receta.es_base)
       setNotas(receta.notas ?? '')
+      setHorasManoObra(receta.horas_mano_obra ? decimal(receta.horas_mano_obra, 3) : '')
+      setHorasGif(receta.horas_gif ? decimal(receta.horas_gif, 3) : '')
       setItems(
         (its.data ?? []).map((i) => ({
           tipo: i.ingrediente_id ? 'ingrediente' : 'receta',
@@ -151,9 +238,12 @@ export function RecetaEditor() {
     unidad: i.unidad,
   }))
   const rend = leerNumero(rendimiento) ?? 0
+  const horasMo = leerNumero(horasManoObra) ?? 0
+  const horasG = leerNumero(horasGif) ?? 0
+  const horas = costoHoras(horasMo, horasG, valorHora)
   const calculo = costoReceta(
     itemsCalculo,
-    adicionales.map((a) => ({ monto_neto: leerNumero(a.monto) ?? 0 })),
+    [...adicionales.map((a) => ({ monto_neto: leerNumero(a.monto) ?? 0 })), { monto_neto: horas.total }],
     rend,
     mapaIng,
     mapaSub,
@@ -174,6 +264,18 @@ export function RecetaEditor() {
     return lista.filter(Boolean)
   }, [receta, costos, productos, opciones])
 
+  // Productos conectados que además traen mano de obra como costo adicional: se contaría dos veces
+  const duplicados = useMemo(() => {
+    if (!receta || horas.total <= 0) return []
+    return costos
+      .filter((c) => c.receta_id === receta.id && adicionalesCosto.some((a) => a.definicion_id === c.definicion_id && esCostoIndirecto(a.concepto)))
+      .map((c) => {
+        if (c.producto_id) return productos.find((p) => p.id === c.producto_id)?.nombre ?? ''
+        const o = opciones.find((x) => x.id === c.opcion_id)
+        return `${productos.find((p) => p.id === o?.producto_id)?.nombre} · ${o?.nombre}`
+      })
+  }, [receta, horas.total, costos, adicionalesCosto, productos, opciones])
+
   const recetasBase = recetas.filter((r) => r.id !== receta?.id && (r.es_base || items.some((i) => i.tipo === 'receta' && i.refId === r.id)))
 
   async function guardar() {
@@ -181,6 +283,9 @@ export function RecetaEditor() {
     setOk('')
     if (!nombre.trim()) return setError('Escribe el nombre de la receta.')
     if (!(rend > 0)) return setError('Escribe cuánto rinde la receta.')
+    if ((horasManoObra.trim() && leerNumero(horasManoObra) == null) || (horasGif.trim() && leerNumero(horasGif) == null) || horasMo < 0 || horasG < 0) {
+      return setError('Revisa las horas: escribe un número, por ejemplo 1,5.')
+    }
     if (items.some((i) => !i.refId || !((leerNumero(i.cantidad) ?? 0) > 0))) {
       return setError('Revisa los ingredientes: a cada uno le falta elegir o la cantidad.')
     }
@@ -203,6 +308,8 @@ export function RecetaEditor() {
       p_adicionales: adicionales
         .filter((a) => a.concepto.trim())
         .map((a) => ({ concepto: a.concepto.trim(), monto_neto: leerNumero(a.monto) ?? 0 })),
+      p_horas_mano_obra: horasMo,
+      p_horas_gif: horasG,
     })
     setGuardando(false)
     if (error) return setError(error.code === '23505' ? 'Ya existe una receta con ese nombre.' : mensajeError(error))
@@ -378,14 +485,56 @@ export function RecetaEditor() {
         </section>
 
         <section>
+          <h2 className="mb-1 text-lg font-semibold">Mano de obra y G.I.F.</h2>
+          <p className="mb-2 text-sm text-suave">
+            Suma el tiempo de todas las etapas de la receta, sin importar cuántas personas participen. Media hora es 0,5.
+          </p>
+          <Tarjeta className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Campo
+                etiqueta="Mano de obra (horas)"
+                inputMode="decimal"
+                placeholder="Ej.: 5"
+                value={horasManoObra}
+                disabled={!editable}
+                onChange={(e) => setHorasManoObra(e.target.value)}
+                ayuda={`× ${pesos(valorHora.mano_obra)} = ${pesos(horas.manoObra)}`}
+              />
+              <Campo
+                etiqueta="G.I.F. (horas)"
+                inputMode="decimal"
+                placeholder="Ej.: 1"
+                value={horasGif}
+                disabled={!editable}
+                onChange={(e) => setHorasGif(e.target.value)}
+                ayuda={`× ${pesos(valorHora.gif)} = ${pesos(horas.gif)}`}
+              />
+            </div>
+            {rend > 0 && horas.total > 0 && (
+              <p className="text-sm">
+                Son <b className="cifra">{pesos(horas.total)}</b> por tanda: <b className="cifra">{pesos(horas.total / rend)}</b> por {unidad === 'un' ? 'unidad' : unidad}.
+              </p>
+            )}
+            <p className="text-xs text-suave">El valor hora se cambia en la lista de Recetas.</p>
+          </Tarjeta>
+          {duplicados.length > 0 && (
+            <div className="mt-2">
+              <Aviso tipo="error">
+                Mano de obra contada dos veces en: {duplicados.join(', ')}. Ábrelos y quita su costo adicional de mano de obra.
+              </Aviso>
+            </div>
+          )}
+        </section>
+
+        <section>
           <h2 className="mb-1 text-lg font-semibold">Costos adicionales de la receta</h2>
-          <p className="mb-2 text-sm text-suave">Por tanda completa: mano de obra, gas, moldes… (sin IVA)</p>
+          <p className="mb-2 text-sm text-suave">Por tanda completa: moldes, gas extra… (sin IVA). La mano de obra va arriba.</p>
           <div className="space-y-2">
             {adicionales.map((a, i) => (
               <div key={i} className="flex gap-2">
                 <input
                   aria-label="Concepto"
-                  placeholder="Ej.: Mano de obra"
+                  placeholder="Ej.: Moldes"
                   value={a.concepto}
                   disabled={!editable}
                   onChange={(e) => setAdicionales(adicionales.map((x, j) => (j === i ? { ...x, concepto: e.target.value } : x)))}
