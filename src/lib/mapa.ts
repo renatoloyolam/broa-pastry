@@ -25,27 +25,23 @@ export interface DatosMapa {
 
 export type Cuadrante = 'estrella' | 'popular' | 'rentable' | 'debil'
 
-export const CUADRANTES: Record<Cuadrante, { icono: string; titulo: string; resumen: string; accion: string }> = {
+export const CUADRANTES: Record<Cuadrante, { titulo: string; resumen: string; accion: string }> = {
   estrella: {
-    icono: '⭐',
     titulo: 'Estrellas',
     resumen: 'Se venden mucho y dejan buen margen',
     accion: 'Cuídalos: mantén la calidad, que siempre haya y que se vean. No les bajes el precio.',
   },
   popular: {
-    icono: '🐴',
     titulo: 'Populares de bajo margen',
     resumen: 'Se venden mucho pero dejan poco',
     accion: 'Súbeles el precio de a poco o baja su costo (porción, receta o proveedor). Se venden igual.',
   },
   rentable: {
-    icono: '🧩',
     titulo: 'Rentables poco vendidos',
     resumen: 'Dejan buen margen pero se venden poco',
     accion: 'Promociónalos: mejor lugar en la vitrina, que el equipo los recomiende, combos o degustación.',
   },
   debil: {
-    icono: '🐶',
     titulo: 'Débiles',
     resumen: 'Se venden poco y dejan poco',
     accion: 'Evalúa sacarlos, cambiar la receta o reemplazarlos por algo nuevo.',

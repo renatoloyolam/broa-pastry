@@ -4,6 +4,7 @@ import { useSesion } from '../sesion/SesionProvider'
 import { Aviso, Boton, Campo } from '../componentes/ui'
 import { entrarConFaceId, faceIdDisponible, mensajeFaceId } from '../lib/faceid'
 import { AyudaInstalar } from '../componentes/AyudaInstalar'
+import { ICONOS } from '../componentes/iconos'
 
 function PantallaMarca({ children }: { children: ReactNode }) {
   return (
@@ -58,7 +59,7 @@ export function Login() {
         {cerradaPorInactividad && <Aviso tipo="info">Cerramos tu sesión por inactividad. Vuelve a entrar.</Aviso>}
         {faceIdDisponible() && (
           <>
-            <Boton type="button" onClick={entrarFaceId} cargando={conFaceId} className="min-h-14 text-lg">
+            <Boton icono={ICONOS.faceId} type="button" onClick={entrarFaceId} cargando={conFaceId} className="min-h-14 text-lg">
               Entrar con Face ID
             </Boton>
             <p className="text-center text-xs text-suave">o con tu correo y contraseña</p>
@@ -85,7 +86,7 @@ export function Login() {
           onChange={(e) => setClave(e.target.value)}
         />
         {error && <Aviso>{error}</Aviso>}
-        <Boton type="submit" variante={faceIdDisponible() ? 'secundario' : 'primario'} cargando={enviando}>
+        <Boton icono={ICONOS.entrar} type="submit" variante={faceIdDisponible() ? 'secundario' : 'primario'} cargando={enviando}>
           Entrar
         </Boton>
         <p className="pt-2 text-center text-xs text-suave">
@@ -132,10 +133,10 @@ export function ReclamarDueno() {
           onChange={(e) => setNombre(e.target.value)}
         />
         {error && <Aviso>{error}</Aviso>}
-        <Boton type="submit" cargando={enviando}>
+        <Boton icono={ICONOS.dueno} type="submit" cargando={enviando}>
           Ser el dueño de la app
         </Boton>
-        <Boton type="button" variante="texto" onClick={salir}>
+        <Boton icono={ICONOS.salir} type="button" variante="texto" onClick={salir}>
           Salir
         </Boton>
       </form>
@@ -154,7 +155,7 @@ export function SinAcceso() {
             ? 'Tu cuenta está desactivada. Si crees que es un error, habla con Sofía.'
             : 'Tu cuenta todavía no tiene acceso. Pídele a un dueño que te cree un usuario desde la app.'}
         </Aviso>
-        <Boton variante="secundario" onClick={salir}>
+        <Boton icono={ICONOS.salir} variante="secundario" onClick={salir}>
           Salir
         </Boton>
       </div>
@@ -205,7 +206,7 @@ export function FormCambiarClave({ alTerminar }: { alTerminar: () => void | Prom
         onChange={(e) => setRepetir(e.target.value)}
       />
       {error && <Aviso>{error}</Aviso>}
-      <Boton type="submit" cargando={enviando}>
+      <Boton icono={ICONOS.clave} type="submit" cargando={enviando}>
         Guardar contraseña
       </Boton>
     </form>
@@ -221,7 +222,7 @@ export function CambiarClaveObligatorio() {
           Hola {info?.perfil?.nombre}. Entraste con una contraseña temporal; crea una propia para continuar.
         </Aviso>
         <FormCambiarClave alTerminar={recargar} />
-        <Boton variante="texto" onClick={salir}>
+        <Boton icono={ICONOS.salir} variante="texto" onClick={salir}>
           Salir
         </Boton>
       </div>

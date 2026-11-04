@@ -4,6 +4,7 @@ import { decimal, fecha, leerNumero, pesos } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Selector } from '../../componentes/ui'
+import { ICONOS } from '../../componentes/iconos'
 
 const MODOS: { valor: ModoCosto; titulo: string; ayuda: string }[] = [
   { valor: 'manual', titulo: 'Costo a mano', ayuda: 'Escribes cuánto cuesta' },
@@ -236,7 +237,7 @@ export function EditorCosto({ productoId, opcionId, costo, alGuardar }: Props) {
                 onChange={(e) => setCorregirDesde(e.target.value)}
                 ayuda="Se aplica a todos los costos que cambiaste hoy."
               />
-              <Boton variante="secundario" disabled={!corregirDesde} onClick={aplicarDesde}>
+              <Boton icono={ICONOS.aplicar} variante="secundario" disabled={!corregirDesde} onClick={aplicarDesde}>
                 Aplicar desde esa fecha
               </Boton>
             </div>
@@ -246,7 +247,7 @@ export function EditorCosto({ productoId, opcionId, costo, alGuardar }: Props) {
       {corregido && <Aviso tipo="ok">Listo: el costo rige desde el {fecha(corregido + 'T12:00:00')}.</Aviso>}
 
       {editable && (
-        <Boton onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
           Guardar costo
         </Boton>
       )}

@@ -3,6 +3,7 @@ import { useCatalogo, type Categoria } from '../../lib/catalogo'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Encabezado } from '../../componentes/ui'
+import { ICONOS } from '../../componentes/iconos'
 
 function FilaCategoria({ c, editable, cantidad }: { c: Categoria; editable: boolean; cantidad: number }) {
   const { recargar } = useCatalogo()
@@ -91,7 +92,7 @@ export function Categorias() {
             onChange={(e) => setNueva(e.target.value)}
             className="min-h-12 min-w-0 flex-1 rounded-xl border border-borde bg-superficie px-4"
           />
-          <Boton className="!w-auto" onClick={crear}>
+          <Boton icono={ICONOS.agregar} className="!w-auto" onClick={crear}>
             Agregar
           </Boton>
         </div>

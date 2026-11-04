@@ -1,11 +1,20 @@
+import type { LucideIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Aviso, Encabezado, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { AccionEnlace, Aviso, Encabezado, IconoCirculo, IconoLinea, Pestanas, Selector, Tarjeta, Titulo } from '../../componentes/ui'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import { clasificar, CUADRANTES, ordenar, type Cuadrante, type DatosMapa } from '../../lib/mapa'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { PESTANAS_CATALOGO } from './Productos'
+import { ICONOS } from '../../componentes/iconos'
+
+const ICONO_CUADRANTE: Record<Cuadrante, LucideIcon> = {
+  estrella: ICONOS.estrella,
+  popular: ICONOS.popular,
+  rentable: ICONOS.rentable,
+  debil: ICONOS.debil,
+}
 
 type Rango = '30' | '90' | 'mes' | 'mes_ant'
 
@@ -63,9 +72,9 @@ export function MapaProductos() {
   return (
     <>
       <Encabezado titulo="Productos">
-        <Link to="/productos/simulador" className="text-sm font-semibold text-primario">
+        <AccionEnlace a="/productos/simulador" icono={ICONOS.simulador}>
           Simulador
-        </Link>
+        </AccionEnlace>
       </Encabezado>
       <Pestanas opciones={PESTANAS_CATALOGO} />
 
@@ -102,7 +111,10 @@ export function MapaProductos() {
 
           {filtrar(r.perdidas).length > 0 && (
             <section className="rounded-2xl border border-peligro/40 bg-superficie p-4">
-              <h2 className="font-semibold text-peligro">🚨 Se venden bajo el costo</h2>
+              <h2 className="flex items-center gap-2 font-semibold text-peligro">
+                <ICONOS.urgente className="h-5 w-5 shrink-0" aria-hidden />
+                Se venden bajo el costo
+              </h2>
               <p className="mb-2 text-sm text-suave">Cada venta pierde plata. Revisa el costo o sube el precio.</p>
               <ul className="space-y-2 text-sm">
                 {filtrar(r.perdidas).map((p) => (
@@ -143,9 +155,7 @@ export function MapaProductos() {
                       }`}
                     >
                       <span className="flex items-baseline justify-between">
-                        <span className="text-2xl" aria-hidden>
-                          {CUADRANTES[c].icono}
-                        </span>
+                        <IconoCirculo icono={ICONO_CUADRANTE[c]} />
                         <span className="cifra text-2xl font-bold">{items.length}</span>
                       </span>
                       <span className="mt-1 block text-sm font-semibold leading-tight">{CUADRANTES[c].titulo}</span>
@@ -158,11 +168,10 @@ export function MapaProductos() {
               </div>
 
               <section>
-                <h2 className="text-lg font-semibold">
-                  {info.icono} {info.titulo}
-                </h2>
+                <Titulo icono={ICONO_CUADRANTE[cuadrante]} className="">{info.titulo}</Titulo>
                 <p className="text-sm text-suave">{info.resumen}.</p>
-                <p className="mt-2 rounded-xl bg-superficie-2 px-4 py-3 text-sm">💡 {info.accion}</p>
+                <p className="mt-2 rounded-xl bg-superficie-2 px-4 py-3 text-sm"><IconoLinea icono={ICONOS.idea} />
+                  {info.accion}</p>
                 {lista.length === 0 ? (
                   <p className="mt-3 text-sm text-suave">Ningún producto en este grupo.</p>
                 ) : (

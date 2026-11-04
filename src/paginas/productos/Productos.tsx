@@ -5,13 +5,14 @@ import { margenReferencia } from '../../lib/costeo'
 import { pesos, porcentaje } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
-import { Aviso, Boton, Campo, Encabezado, EstadoVacio, Insignia, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { Acceso, Aviso, Boton, Campo, Encabezado, EstadoVacio, Insignia, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { ICONOS } from '../../componentes/iconos'
 
 export const PESTANAS_CATALOGO = [
-  { a: '/productos', texto: 'Productos', fin: true },
-  { a: '/productos/recetas', texto: 'Recetas' },
-  { a: '/productos/ingredientes', texto: 'Ingredientes' },
-  { a: '/productos/mapa', texto: 'Mapa' },
+  { a: '/productos', texto: 'Productos', fin: true, icono: ICONOS.productos },
+  { a: '/productos/recetas', texto: 'Recetas', icono: ICONOS.recetas },
+  { a: '/productos/ingredientes', texto: 'Ingredientes', icono: ICONOS.ingredientes },
+  { a: '/productos/mapa', texto: 'Mapa', icono: ICONOS.mapa },
 ]
 
 function normalizar(t: string) {
@@ -73,12 +74,13 @@ export function ProductosLista() {
 
   return (
     <>
-      <Encabezado titulo="Productos">
-        <Link to="/productos/categorias" className="text-sm font-semibold text-primario">
-          Categorías
-        </Link>
-      </Encabezado>
+      <Encabezado titulo="Productos" />
       <Pestanas opciones={PESTANAS_CATALOGO} />
+      <nav aria-label="Herramientas de productos" className="mb-4 grid grid-cols-3 gap-2">
+        <Acceso a="/productos/excel" icono={ICONOS.costosExcel} titulo="Costos en Excel" />
+        <Acceso a="/productos/categorias" icono={ICONOS.categorias} titulo="Categorías" />
+        <Acceso a="/productos/simulador" icono={ICONOS.simulador} titulo="Simulador" />
+      </nav>
       {error && <Aviso>{error}</Aviso>}
 
       {!cargando && productos.length > 0 && (
@@ -128,13 +130,6 @@ export function ProductosLista() {
         </div>
       </div>
 
-      <Link
-        to="/productos/excel"
-        className="mb-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-borde bg-superficie text-sm font-semibold text-primario active:bg-superficie-2"
-      >
-        📊 Costos en Excel (descargar o subir plantilla)
-      </Link>
-
       {puede('editar_catalogo') &&
         (creando ? (
           <Tarjeta className="mb-3 space-y-3">
@@ -146,20 +141,20 @@ export function ProductosLista() {
             />
             {errorNuevo && <Aviso>{errorNuevo}</Aviso>}
             <div className="grid grid-cols-2 gap-2">
-              <Boton variante="secundario" onClick={() => setCreando(false)}>
+              <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => setCreando(false)}>
                 Cancelar
               </Boton>
-              <Boton onClick={crear}>Crear</Boton>
+              <Boton icono={ICONOS.agregar} onClick={crear}>Crear</Boton>
             </div>
           </Tarjeta>
         ) : (
-          <Boton variante="secundario" className="mb-3" onClick={() => setCreando(true)}>
-            + Nuevo producto
+          <Boton icono={ICONOS.agregar} variante="secundario" className="mb-3" onClick={() => setCreando(true)}>
+            Nuevo producto
           </Boton>
         ))}
 
       {!cargando && filas.length === 0 && (
-        <EstadoVacio icono="🔎" titulo="No hay productos que coincidan">
+        <EstadoVacio icono={ICONOS.buscar} titulo="No hay productos que coincidan">
           {productos.length === 0
             ? 'Aún no hay productos. Se crean solos al importar el Excel de influye.app, o con el botón de arriba.'
             : 'Prueba con otra búsqueda o quita los filtros.'}

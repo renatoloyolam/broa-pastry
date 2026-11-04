@@ -2,76 +2,65 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { mensajeError, supabase } from '../lib/supabase'
 import { NOMBRE_ROL, useSesion, type Configuracion } from '../sesion/SesionProvider'
-import { Aviso, Boton, Campo, Encabezado, Interruptor, Tarjeta } from '../componentes/ui'
+import { Acceso, Aviso, Boton, Campo, Encabezado, IconoCirculo, Interruptor, Tarjeta } from '../componentes/ui'
 import { FormCambiarClave } from './Acceso'
 import { SeccionFaceId } from '../componentes/SeccionFaceId'
 import { SeccionNotificaciones } from '../componentes/SeccionNotificaciones'
+import { ICONOS } from '../componentes/iconos'
 
-function Fila({ a, titulo, detalle }: { a: string; titulo: string; detalle?: string }) {
+function Grupo({ titulo, children }: { titulo: string; children: ReactNode }) {
   return (
-    <Link to={a} className="flex min-h-14 items-center gap-3 px-4 py-3 active:bg-superficie-2">
-      <span className="flex-1">
-        <span className="block font-medium">{titulo}</span>
-        {detalle && <span className="block text-xs text-suave">{detalle}</span>}
-      </span>
-      <svg viewBox="0 0 24 24" className="h-5 w-5 text-suave" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </Link>
-  )
-}
-
-function Grupo({ children }: { children: ReactNode }) {
-  return (
-    <div className="mb-4 divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie">
-      {children}
-    </div>
+    <section className="mb-5">
+      <h2 className="mb-2 text-sm font-semibold text-suave">{titulo}</h2>
+      <div className="grid grid-cols-2 gap-2">{children}</div>
+    </section>
   )
 }
 
 export function Mas() {
   const { info, puede, salir } = useSesion()
   const perfil = info?.perfil
+  const esDueno = perfil?.rol === 'dueno'
   return (
     <>
       <Encabezado titulo="Más" />
-      <Tarjeta className="mb-4">
-        <p className="font-semibold">{perfil?.nombre}</p>
-        <p className="text-sm text-suave">
-          {perfil?.email} · {perfil && NOMBRE_ROL[perfil.rol]}
-        </p>
-      </Tarjeta>
-      <Grupo>
-        <Fila a="/mas/cuenta" titulo="Mi cuenta" detalle="Face ID, notificaciones y contraseña" />
+      <Link to="/mas/cuenta" className="mb-5 flex items-center gap-3 rounded-2xl border border-borde bg-superficie p-4 active:bg-superficie-2">
+        <IconoCirculo icono={ICONOS.cuenta} />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">{perfil?.nombre}</span>
+          <span className="block truncate text-sm text-suave">
+            {perfil?.email} · {perfil && NOMBRE_ROL[perfil.rol]}
+          </span>
+          <span className="block text-xs text-suave">Mi cuenta: Face ID, notificaciones y contraseña</span>
+        </span>
+        <ICONOS.siguiente className="h-5 w-5 shrink-0 text-suave" aria-hidden />
+      </Link>
+
+      <Grupo titulo="Día a día">
+        <Acceso a="/produccion" icono={ICONOS.produccion} titulo="Producción sugerida" detalle="Cuánto hacer cada día" />
+        {puede('gestionar_pedidos') && <Acceso a="/pedidos" icono={ICONOS.pedidos} titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />}
       </Grupo>
-      {puede('gestionar_finanzas') && (
-        <Grupo>
-          <Fila a="/finanzas" titulo="Finanzas del mes" detalle="Gastos, meta, ganancia real, IVA e insumos" />
+
+      {(puede('gestionar_finanzas') || puede('exportar') || puede('ver_costos')) && (
+        <Grupo titulo="Números">
+          {puede('gestionar_finanzas') && <Acceso a="/finanzas" icono={ICONOS.finanzas} titulo="Finanzas del mes" detalle="Gastos, meta, ganancia real, IVA e insumos" />}
+          {puede('exportar') && <Acceso a="/mas/exportar" icono={ICONOS.exportar} titulo="Exportar reportes" detalle="Excel, PDF y CSV para el contador" />}
+          {puede('ver_costos') && <Acceso a="/mas/alertas" icono={ICONOS.alertas} titulo="Alertas" detalle="Qué avisos ver y sus límites" />}
         </Grupo>
       )}
-      <Grupo>
-        <Fila a="/produccion" titulo="Producción sugerida" detalle="Cuánto hacer cada día según lo que se vende" />
-        {puede('gestionar_pedidos') && <Fila a="/pedidos" titulo="Pedidos de tortas" detalle="Encargos, abonos y saldos" />}
-      </Grupo>
-      {(puede('exportar') || puede('ver_costos')) && (
-        <Grupo>
-          {puede('exportar') && <Fila a="/mas/exportar" titulo="Exportar reportes" detalle="Excel, PDF y CSV para el contador" />}
-          {puede('ver_costos') && <Fila a="/mas/alertas" titulo="Alertas" detalle="Qué avisos ver y sus límites" />}
-        </Grupo>
-      )}
-      {(puede('gestionar_usuarios') || perfil?.rol === 'dueno' || puede('editar_configuracion')) && (
-        <Grupo>
-          {puede('gestionar_usuarios') && <Fila a="/mas/usuarios" titulo="Usuarios" detalle="Crear cuentas y roles" />}
-          {perfil?.rol === 'dueno' && (
-            <Fila a="/mas/permisos" titulo="Permisos de la administradora" detalle="Qué puede ver y hacer" />
-          )}
-          {perfil?.rol === 'dueno' && <Fila a="/mas/respaldo" titulo="Respaldo" detalle="Descargar una copia de todo" />}
+
+      {(puede('gestionar_usuarios') || esDueno || puede('editar_configuracion')) && (
+        <Grupo titulo="Administración">
+          {puede('gestionar_usuarios') && <Acceso a="/mas/usuarios" icono={ICONOS.usuarios} titulo="Usuarios" detalle="Crear cuentas y roles" />}
+          {esDueno && <Acceso a="/mas/permisos" icono={ICONOS.permisos} titulo="Permisos" detalle="Qué puede hacer la administradora" />}
+          {esDueno && <Acceso a="/mas/respaldo" icono={ICONOS.respaldo} titulo="Respaldo" detalle="Descargar una copia de todo" />}
           {(puede('editar_configuracion') || perfil?.rol === 'admin') && (
-            <Fila a="/mas/configuracion" titulo="Configuración" detalle="IVA, turnos y cierre de sesión" />
+            <Acceso a="/mas/configuracion" icono={ICONOS.configuracion} titulo="Configuración" detalle="IVA, turnos y cierre de sesión" />
           )}
         </Grupo>
       )}
-      <Boton variante="peligro" onClick={salir}>
+
+      <Boton icono={ICONOS.salir} variante="peligro" onClick={salir}>
         Cerrar sesión
       </Boton>
       <p className="mt-6 text-center text-xs text-suave">Broa Pastry by Sofía · versión {__VERSION__}</p>
@@ -91,7 +80,7 @@ export function MiCuenta() {
       {listo ? (
         <div className="space-y-4">
           <Aviso tipo="ok">Contraseña actualizada.</Aviso>
-          <Boton variante="secundario" onClick={() => navegar('/mas')}>
+          <Boton icono={ICONOS.anterior} variante="secundario" onClick={() => navegar('/mas')}>
             Volver
           </Boton>
         </div>
@@ -249,7 +238,7 @@ export function ConfiguracionPagina() {
         </Tarjeta>
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
         {editable && (
-          <Boton onClick={guardar} cargando={guardando}>
+          <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
             Guardar
           </Boton>
         )}

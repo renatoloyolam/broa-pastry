@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 import { fechaDia, fechaHora, nombreDia, numero, pesos, porcentaje } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
-import { Aviso, Encabezado, EstadoVacio, Insignia, Tarjeta } from '../../componentes/ui'
+import { Acceso, Aviso, Encabezado, EstadoVacio, Insignia, Tarjeta } from '../../componentes/ui'
 import { useConfirmar } from '../../componentes/Confirmar'
 import { nombreMes } from '../../lib/finanzas'
 import { agruparMeses, diasSinDatos, type DiaVenta } from '../../lib/ventas'
+import { ICONOS } from '../../componentes/iconos'
 
 
 interface Importacion {
@@ -63,23 +64,23 @@ export function Ventas() {
 
   return (
     <>
-      <Encabezado titulo="Ventas">
-        <Link to="/ventas/horarios" className="text-sm font-semibold text-primario">
-          Horarios
-        </Link>
-      </Encabezado>
+      <Encabezado titulo="Ventas" />
 
       {puede('importar_ventas') && (
         <Link
           to="/ventas/importar"
           className="mb-4 flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primario text-lg font-semibold text-primario-texto"
         >
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
-          </svg>
+          <ICONOS.importar className="h-6 w-6 shrink-0" aria-hidden />
           Importar Excel de influye
         </Link>
       )}
+
+      <nav aria-label="Más sobre ventas" className="mb-4 grid grid-cols-3 gap-2">
+        <Acceso a="/ventas/horarios" icono={ICONOS.horarios} titulo="Horarios" />
+        <Acceso a="/comparar" icono={ICONOS.comparar} titulo="Comparar meses" />
+        <Acceso a="/resumen" icono={ICONOS.resumen} titulo="Resumen semanal" />
+      </nav>
 
       {error && <Aviso>{error}</Aviso>}
       {aviso && (
@@ -89,7 +90,7 @@ export function Ventas() {
       )}
 
       {!cargando && dias.length === 0 && (
-        <EstadoVacio icono="📄" titulo="Aún no hay ventas importadas">
+        <EstadoVacio icono={ICONOS.excel} titulo="Aún no hay ventas importadas">
           {puede('importar_ventas')
             ? 'Exporta el Excel de Transacciones desde influye.app y súbelo con el botón de arriba.'
             : 'Cuando un dueño o la administradora suba el Excel de influye.app, verás aquí las ventas.'}
@@ -156,7 +157,7 @@ export function Ventas() {
                     </span>
                     <span className="cifra font-semibold">{pesos(d.ventas)}</span>
                     <span className="text-suave" aria-hidden>
-                      ›
+                      <ICONOS.siguiente className="block h-5 w-5" />
                     </span>
                   </Link>
                 </li>

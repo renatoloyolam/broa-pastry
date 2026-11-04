@@ -16,6 +16,7 @@ import type { DatosPanel } from '../../lib/panel'
 import { calcularPeriodo, calcularRango, moverAncla, type TipoPeriodo } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 type Formato = 'excel' | 'pdf' | 'csv'
 
@@ -105,7 +106,7 @@ export function Exportar() {
       ) : (
         <div className="mb-4 flex items-center gap-2">
           <button type="button" aria-label="Anterior" onClick={() => setAncla(moverAncla(tipo, ancla, -1))} className="h-11 w-11 rounded-full text-2xl text-primario">
-            ‹
+            <ICONOS.anterior className="mx-auto block h-6 w-6" aria-hidden />
           </button>
           <p className="flex-1 text-center font-semibold">{periodo.etiqueta}</p>
           <button
@@ -115,7 +116,7 @@ export function Exportar() {
             onClick={() => setAncla(moverAncla(tipo, ancla, 1))}
             className="h-11 w-11 rounded-full text-2xl text-primario disabled:opacity-25"
           >
-            ›
+            <ICONOS.siguiente className="mx-auto block h-6 w-6" aria-hidden />
           </button>
         </div>
       )}
@@ -127,21 +128,21 @@ export function Exportar() {
             Resumen, ventas por día, productos, categorías, turnos{puede('ver_costos') || puede('registrar_mermas') ? ', mermas' : ''} y el
             detalle de cada venta.
           </p>
-          <Boton onClick={() => exportar('excel')} cargando={trabajando === 'excel'} disabled={trabajando != null}>
+          <Boton icono={ICONOS.excel} onClick={() => exportar('excel')} cargando={trabajando === 'excel'} disabled={trabajando != null}>
             Descargar Excel
           </Boton>
         </Tarjeta>
         <Tarjeta className="space-y-2">
           <p className="font-semibold">Resumen en PDF</p>
           <p className="text-sm text-suave">Para leer o imprimir: indicadores, días, productos y mermas.</p>
-          <Boton variante="secundario" onClick={() => exportar('pdf')} cargando={trabajando === 'pdf'} disabled={trabajando != null}>
+          <Boton icono={ICONOS.pdf} variante="secundario" onClick={() => exportar('pdf')} cargando={trabajando === 'pdf'} disabled={trabajando != null}>
             Descargar PDF
           </Boton>
         </Tarjeta>
         <Tarjeta className="space-y-2">
           <p className="font-semibold">Ventas para el contador (CSV)</p>
           <p className="text-sm text-suave">Una fila por boleta: fecha, hora, medio de pago, total, neto e IVA.</p>
-          <Boton variante="secundario" onClick={() => exportar('csv')} cargando={trabajando === 'csv'} disabled={trabajando != null}>
+          <Boton icono={ICONOS.csv} variante="secundario" onClick={() => exportar('csv')} cargando={trabajando === 'csv'} disabled={trabajando != null}>
             Descargar CSV
           </Boton>
         </Tarjeta>

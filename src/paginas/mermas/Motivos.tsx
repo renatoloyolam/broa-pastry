@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Aviso, Boton, Encabezado, Interruptor, Tarjeta } from '../../componentes/ui'
 import { mensajeError, supabase } from '../../lib/supabase'
+import { ICONOS } from '../../componentes/iconos'
 
 interface Motivo {
   id: number
@@ -80,7 +81,7 @@ export function Motivos() {
             onChange={(e) => setNuevo(e.target.value)}
             className="min-h-12 min-w-0 flex-1 rounded-xl border border-borde bg-superficie px-4"
           />
-          <Boton className="!w-auto" onClick={crear}>
+          <Boton icono={ICONOS.agregar} className="!w-auto" onClick={crear}>
             Agregar
           </Boton>
         </div>

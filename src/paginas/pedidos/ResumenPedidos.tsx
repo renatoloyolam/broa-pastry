@@ -1,8 +1,10 @@
+import { IconoCirculo } from '../../componentes/ui'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { pesos } from '../../lib/formato'
 import { supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 interface Resumen {
   hoy: number
@@ -38,15 +40,13 @@ export function ResumenPedidos() {
         r.atrasados > 0 ? 'border-peligro/50' : 'border-borde'
       }`}
     >
-      <span className="text-2xl" aria-hidden>
-        🎂
-      </span>
+      <IconoCirculo icono={ICONOS.pedidos} />
       <span className="flex-1 text-sm">
         <span className="block font-semibold">Pedidos de tortas: {partes.join(' · ')}</span>
         <span className="block text-xs text-suave">Saldo por cobrar {pesos(r.saldo_pendiente)}</span>
       </span>
       <span className="text-suave" aria-hidden>
-        ›
+        <ICONOS.siguiente className="block h-5 w-5" />
       </span>
     </Link>
   )

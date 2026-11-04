@@ -1,10 +1,11 @@
+import type { LucideIcon } from 'lucide-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { GraficoDias } from '../../componentes/GraficoDias'
 import { AlertasInicio } from '../alertas/Alertas'
 import { ResumenFinanzas } from '../finanzas/ResumenFinanzas'
 import { ResumenPedidos } from '../pedidos/ResumenPedidos'
-import { Aviso, Boton, Campo, EstadoVacio, Tarjeta } from '../../componentes/ui'
+import { Acceso, Aviso, Boton, Campo, EstadoVacio, IconoCirculo, Tarjeta } from '../../componentes/ui'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import {
   ganancia,
@@ -17,13 +18,26 @@ import {
 } from '../../lib/panel'
 import { calcularPeriodo, calcularRango, moverAncla, type Periodo, type TipoPeriodo } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
-import { useSesion } from '../../sesion/SesionProvider'
+import { useSesion, type Permiso } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 const TIPOS: { valor: TipoPeriodo; texto: string }[] = [
   { valor: 'dia', texto: 'Día' },
   { valor: 'semana', texto: 'Semana' },
   { valor: 'mes', texto: 'Mes' },
   { valor: 'rango', texto: 'Rango' },
+]
+
+// Funciones que no están en la barra de abajo: a un toque desde Inicio
+const ACCESOS: { a: string; icono: LucideIcon; titulo: string; permiso: Permiso }[] = [
+  { a: '/ventas/importar', icono: ICONOS.importar, titulo: 'Importar', permiso: 'importar_ventas' },
+  { a: '/produccion', icono: ICONOS.produccion, titulo: 'Producción', permiso: 'ver_ventas' },
+  { a: '/pedidos', icono: ICONOS.pedidos, titulo: 'Pedidos', permiso: 'gestionar_pedidos' },
+  { a: '/finanzas', icono: ICONOS.finanzas, titulo: 'Finanzas', permiso: 'gestionar_finanzas' },
+  { a: '/resumen', icono: ICONOS.resumen, titulo: 'Resumen', permiso: 'ver_ventas' },
+  { a: '/comparar', icono: ICONOS.comparar, titulo: 'Comparar', permiso: 'ver_ventas' },
+  { a: '/ventas/horarios', icono: ICONOS.horarios, titulo: 'Horarios', permiso: 'ver_ventas' },
+  { a: '/productos/mapa', icono: ICONOS.mapa, titulo: 'Mapa', permiso: 'ver_costos' },
 ]
 
 /** "▲ 12%" contra el período anterior (con símbolo y texto, no solo color). */
@@ -143,7 +157,7 @@ function FilaProducto({ p, verCostos, periodo }: { p: ProductoPanel; verCostos: 
 }
 
 export function Inicio() {
-  const { info } = useSesion()
+  const { info, puede } = useSesion()
   const hoy = hoyIso()
   const [tipo, setTipo] = useState<TipoPeriodo>('dia')
   const [ancla, setAncla] = useState(hoy)
@@ -205,15 +219,16 @@ export function Inicio() {
 
   return (
     <>
-      <header className="mb-4 flex items-end justify-between gap-3">
-        <div>
-          <p className="text-sm text-suave">Hola, {primerNombre}</p>
-          <h1 className="font-serif text-3xl font-bold tracking-tight">Resultados</h1>
-        </div>
-        <Link to="/comparar" className="pb-1 text-sm font-semibold text-primario">
-          Comparar meses
-        </Link>
+      <header className="mb-4">
+        <p className="text-sm text-suave">Hola, {primerNombre}</p>
+        <h1 className="font-serif text-3xl font-bold tracking-tight">Resultados</h1>
       </header>
+
+      <nav aria-label="Accesos rápidos" className="mb-4 grid grid-cols-4 gap-2">
+        {ACCESOS.filter((x) => puede(x.permiso)).map((x) => (
+          <Acceso key={x.a} a={x.a} icono={x.icono} titulo={x.titulo} />
+        ))}
+      </nav>
 
       <AlertasInicio />
       <ResumenFinanzas />
@@ -224,12 +239,10 @@ export function Inicio() {
           to="/resumen"
           className="mb-4 flex items-center gap-3 rounded-2xl border border-borde bg-superficie px-4 py-3 text-sm active:bg-superficie-2"
         >
-          <span className="text-2xl" aria-hidden>
-            📬
-          </span>
+          <IconoCirculo icono={ICONOS.resumen} />
           <span className="flex-1 font-semibold">Resumen de la semana pasada</span>
           <span className="text-suave" aria-hidden>
-            ›
+            <ICONOS.siguiente className="block h-5 w-5" />
           </span>
         </Link>
       )}
@@ -269,7 +282,7 @@ export function Inicio() {
             onClick={() => setAncla(moverAncla(tipo, ancla, -1))}
             className="h-11 w-11 rounded-full text-2xl text-primario active:bg-superficie-2"
           >
-            ‹
+            <ICONOS.anterior className="mx-auto block h-6 w-6" aria-hidden />
           </button>
           <p className="flex-1 text-center font-semibold">{periodo.etiqueta}</p>
           <button
@@ -279,7 +292,7 @@ export function Inicio() {
             onClick={() => setAncla(moverAncla(tipo, ancla, 1))}
             className="h-11 w-11 rounded-full text-2xl text-primario active:bg-superficie-2 disabled:opacity-25"
           >
-            ›
+            <ICONOS.siguiente className="mx-auto block h-6 w-6" aria-hidden />
           </button>
         </div>
       )}
@@ -289,12 +302,12 @@ export function Inicio() {
 
       {r && sinVentas && (
         <div className={cargando ? 'opacity-50' : ''}>
-          <EstadoVacio icono="🥐" titulo="No hay ventas importadas en este período">
+          <EstadoVacio icono={ICONOS.ventas} titulo="No hay ventas importadas en este período">
             {datos?.ultimo_dia ? (
               <>
                 <p>Último día con ventas: {fechaDia(datos.ultimo_dia)}.</p>
                 <div className="mt-4 space-y-2">
-                  <Boton onClick={irAlUltimoDia}>Ver el {fechaDia(datos.ultimo_dia)}</Boton>
+                  <Boton icono={ICONOS.calendario} onClick={irAlUltimoDia}>Ver el {fechaDia(datos.ultimo_dia)}</Boton>
                   <Link to="/ventas" className="block font-semibold text-primario">
                     Importar ventas nuevas
                   </Link>
@@ -397,7 +410,7 @@ export function Inicio() {
               ))}
             </ul>
             {datos.productos.length > 10 && (
-              <Boton variante="texto" onClick={() => setVerTodos(!verTodos)}>
+              <Boton icono={ICONOS.expandir} variante="texto" onClick={() => setVerTodos(!verTodos)}>
                 {verTodos ? 'Ver menos' : `Ver los ${datos.productos.length} productos`}
               </Boton>
             )}

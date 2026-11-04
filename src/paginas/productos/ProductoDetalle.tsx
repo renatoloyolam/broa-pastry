@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { estadoCosto, TEXTO_ESTADO, useCatalogo, type Opcion, type Producto } from '../../lib/catalogo'
 import { margenReferencia } from '../../lib/costeo'
 import { leerNumero, pesos, porcentaje } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
-import { Aviso, Boton, Campo, Encabezado, Insignia, Interruptor, Selector, Tarjeta } from '../../componentes/ui'
+import { AccionEnlace, Aviso, Boton, Campo, Encabezado, Insignia, Interruptor, Selector, Tarjeta } from '../../componentes/ui'
 import { EditorCosto } from './EditorCosto'
 import { useConfirmar } from '../../componentes/Confirmar'
+import { ICONOS } from '../../componentes/iconos'
 
 function DatosProducto({ p }: { p: Producto }) {
   const { categorias, recargar } = useCatalogo()
@@ -93,7 +94,7 @@ function DatosProducto({ p }: { p: Producto }) {
         />
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
         {editable && (
-          <Boton variante="secundario" onClick={guardar}>
+          <Boton icono={ICONOS.guardar} variante="secundario" onClick={guardar}>
             Guardar datos
           </Boton>
         )}
@@ -151,7 +152,7 @@ function FilaOpcion({ p, o }: { p: Producto; o: Opcion }) {
         <div className="space-y-3 border-t border-borde bg-fondo/50 p-4">
           <EditorCosto opcionId={o.id} costo={c} />
           {puede('editar_catalogo') && (
-            <Boton variante="texto" onClick={alternarActiva}>
+            <Boton icono={ICONOS.ver} variante="texto" onClick={alternarActiva}>
               {o.activa ? 'Desactivar esta opción' : 'Reactivar esta opción'}
             </Boton>
           )}
@@ -177,7 +178,7 @@ function OpcionesACero({ productoId, pendientes }: { productoId: number; pendien
 
   return (
     <div className="mb-3 space-y-2">
-      <Boton variante="secundario" onClick={aplicar}>
+      <Boton icono={ICONOS.aplicar} variante="secundario" onClick={aplicar}>
         Dejar en $0 las {pendientes} opciones sin costo
       </Boton>
       {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
@@ -207,8 +208,8 @@ function NuevaOpcion({ productoId }: { productoId: number }) {
 
   if (!abierta) {
     return (
-      <Boton variante="secundario" onClick={() => setAbierta(true)}>
-        + Agregar opción
+      <Boton icono={ICONOS.agregar} variante="secundario" onClick={() => setAbierta(true)}>
+        Agregar opción
       </Boton>
     )
   }
@@ -224,10 +225,10 @@ function NuevaOpcion({ productoId }: { productoId: number }) {
       />
       {error && <Aviso>{error}</Aviso>}
       <div className="grid grid-cols-2 gap-2">
-        <Boton variante="secundario" onClick={() => setAbierta(false)}>
+        <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => setAbierta(false)}>
           Cancelar
         </Boton>
-        <Boton onClick={crear}>Agregar</Boton>
+        <Boton icono={ICONOS.agregar} onClick={crear}>Agregar</Boton>
       </div>
     </Tarjeta>
   )
@@ -257,9 +258,9 @@ export function ProductoDetalle() {
   return (
     <>
       <Encabezado titulo={p.nombre} volver="/productos">
-        <Link to={`/productos/simulador?p=${p.id}`} className="shrink-0 text-sm font-semibold text-primario">
-          Simular precio
-        </Link>
+        <AccionEnlace a={`/productos/simulador?p=${p.id}`} icono={ICONOS.simulador}>
+          Simular
+        </AccionEnlace>
       </Encabezado>
       <div className="-mt-3 mb-4 flex flex-wrap items-center gap-2">
         <Insignia clase={TEXTO_ESTADO[estado].clase}>{TEXTO_ESTADO[estado].texto}</Insignia>

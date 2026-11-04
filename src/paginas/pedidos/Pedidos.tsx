@@ -5,6 +5,7 @@ import { hoyIso, numero, pesos } from '../../lib/formato'
 import { cuandoEntrega, estadoPago, type PedidoLista } from '../../lib/pedidos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 type Filtro = 'proximos' | 'saldo' | 'entregados' | 'cancelados'
 const FILTROS: { valor: Filtro; texto: string }[] = [
@@ -41,9 +42,10 @@ export function Pedidos() {
       <Encabezado titulo="Pedidos" volver="/mas" />
       <Link
         to="/pedidos/nuevo"
-        className="mb-4 flex min-h-14 items-center justify-center rounded-2xl bg-primario text-lg font-semibold text-primario-texto"
+        className="mb-4 flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primario text-lg font-semibold text-primario-texto"
       >
-        + Nuevo pedido
+        <ICONOS.agregar className="h-6 w-6 shrink-0" aria-hidden />
+        Nuevo pedido
       </Link>
 
       <div className="mb-4 grid grid-cols-4 gap-1 rounded-2xl bg-superficie-2 p-1">
@@ -69,7 +71,7 @@ export function Pedidos() {
       )}
 
       {pedidos && pedidos.length === 0 && (
-        <EstadoVacio icono="🎂" titulo={filtro === 'proximos' ? 'No hay pedidos por entregar' : 'No hay pedidos aquí'}>
+        <EstadoVacio icono={ICONOS.pedidos} titulo={filtro === 'proximos' ? 'No hay pedidos por entregar' : 'No hay pedidos aquí'}>
           {filtro === 'proximos' ? 'Cuando alguien encargue una torta, anótala con "Nuevo pedido" para no olvidar la fecha ni el saldo.' : ''}
         </EstadoVacio>
       )}

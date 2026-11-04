@@ -8,6 +8,7 @@ import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, EstadoVacio, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import { PESTANAS_CATALOGO } from './Productos'
 import { useConfirmar } from '../../componentes/Confirmar'
+import { ICONOS } from '../../componentes/iconos'
 
 export function IngredientesLista() {
   const { ingredientes, cargando, error } = useCatalogo()
@@ -38,7 +39,7 @@ export function IngredientesLista() {
         />
       )}
       {!cargando && ingredientes.length === 0 && (
-        <EstadoVacio icono="🧈" titulo="Aún no hay ingredientes">
+        <EstadoVacio icono={ICONOS.ingredientes} titulo="Aún no hay ingredientes">
           Agrega cada ingrediente con lo que pagas por él (sin IVA). Ej.: Harina, 25 kg, $18.000. Cuando el precio
           cambie, lo actualizas aquí y todas las recetas se recalculan solas.
         </EstadoVacio>
@@ -235,7 +236,7 @@ export function IngredienteEditor() {
         {error && <Aviso>{error}</Aviso>}
         {ok && <Aviso tipo="ok">{ok}</Aviso>}
         {editable && (
-          <Boton onClick={guardar} cargando={guardando}>
+          <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
             Guardar
           </Boton>
         )}
@@ -263,7 +264,7 @@ export function IngredienteEditor() {
         )}
 
         {editable && !esNuevo && (
-          <Boton variante="texto" onClick={eliminar}>
+          <Boton icono={ICONOS.borrar} variante="texto" onClick={eliminar}>
             Eliminar ingrediente
           </Boton>
         )}

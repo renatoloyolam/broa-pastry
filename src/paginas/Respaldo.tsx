@@ -5,6 +5,7 @@ import { fechaHora, hoyIso, numero } from '../lib/formato'
 import { crearRespaldo, diasDesdeRespaldo } from '../lib/respaldo'
 import { mensajeError, supabase } from '../lib/supabase'
 import { useSesion } from '../sesion/SesionProvider'
+import { ICONOS } from '../componentes/iconos'
 
 export function Respaldo() {
   const { config, recargar } = useSesion()
@@ -58,7 +59,7 @@ export function Respaldo() {
           </Tarjeta>
         )}
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
-        <Boton onClick={descargar} cargando={progreso != null} className="min-h-14 text-lg">
+        <Boton icono={ICONOS.descargar} onClick={descargar} cargando={progreso != null} className="min-h-14 text-lg">
           Descargar respaldo
         </Boton>
       </div>

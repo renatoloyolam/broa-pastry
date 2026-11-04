@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Aviso, Boton, Campo, Encabezado, Insignia } from '../../componentes/ui'
+import { AccionEnlace, Aviso, Boton, Campo, Encabezado, Insignia } from '../../componentes/ui'
 import { decimal, fechaDia, hoyIso, leerNumero, numero, pesos } from '../../lib/formato'
 import { normalizar } from '../../lib/importador'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { useConfirmar } from '../../componentes/Confirmar'
+import { ICONOS } from '../../componentes/iconos'
 
 interface ProductoSimple {
   id: number
@@ -159,14 +159,15 @@ export function Mermas() {
 
   return (
     <>
-      <Encabezado titulo="Mermas">
-        <Link to="/produccion" className="text-sm font-semibold text-primario">
-          Producción
-        </Link>
-        <Link to="/mermas/reporte" className="text-sm font-semibold text-primario">
+      <Encabezado titulo="Mermas" />
+      <nav aria-label="Más sobre mermas" className="mb-4 grid grid-cols-2 gap-2">
+        <AccionEnlace a="/mermas/reporte" icono={ICONOS.reporte}>
           Reporte
-        </Link>
-      </Encabezado>
+        </AccionEnlace>
+        <AccionEnlace a="/produccion" icono={ICONOS.produccion}>
+          Producción
+        </AccionEnlace>
+      </nav>
 
       <section className="space-y-5 rounded-2xl border border-borde bg-superficie p-4">
         {/* Fecha */}
@@ -314,7 +315,7 @@ export function Mermas() {
 
         {error && <Aviso>{error}</Aviso>}
         {ok && <Aviso tipo="ok">{ok}</Aviso>}
-        <Boton onClick={guardar} cargando={guardando} className="min-h-14 text-lg">
+        <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando} className="min-h-14 text-lg">
           Guardar merma
         </Boton>
       </section>

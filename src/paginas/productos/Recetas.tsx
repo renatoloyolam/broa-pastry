@@ -8,6 +8,7 @@ import { useSesion } from '../../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, EstadoVacio, Insignia, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import { PESTANAS_CATALOGO } from './Productos'
 import { useConfirmar } from '../../componentes/Confirmar'
+import { ICONOS } from '../../componentes/iconos'
 
 export function RecetasLista() {
   const { recetas, cargando, error } = useCatalogo()
@@ -38,7 +39,7 @@ export function RecetasLista() {
         />
       )}
       {!cargando && recetas.length === 0 && (
-        <EstadoVacio icono="📖" titulo="Aún no hay recetas">
+        <EstadoVacio icono={ICONOS.recetas} titulo="Aún no hay recetas">
           Crea una receta con sus ingredientes y cuánto rinde (ej.: 1 receta = 12 brownies). Para usar recetas, primero
           agrega los ingredientes con su precio en la pestaña Ingredientes.
         </EstadoVacio>
@@ -431,7 +432,7 @@ export function RecetaEditor() {
         {error && <Aviso>{error}</Aviso>}
         {ok && <Aviso tipo="ok">{ok}</Aviso>}
         {editable && !esNueva && (
-          <Boton variante="texto" onClick={eliminar}>
+          <Boton icono={ICONOS.borrar} variante="texto" onClick={eliminar}>
             Eliminar receta
           </Boton>
         )}
@@ -452,7 +453,7 @@ export function RecetaEditor() {
             </p>
           </div>
           {editable && (
-            <Boton className="!w-auto" onClick={guardar} cargando={guardando}>
+            <Boton icono={ICONOS.guardar} className="!w-auto" onClick={guardar} cargando={guardando}>
               Guardar
             </Boton>
           )}

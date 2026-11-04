@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Aviso, Encabezado, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Encabezado, IconoLinea, Selector, Tarjeta } from '../../componentes/ui'
 import { calcularCalor, DIA_CORTO, NIVELES, NOMBRE_DIA, rangoHora, type DatosCalor, type Medida } from '../../lib/calor'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
+import { ICONOS } from '../../componentes/iconos'
 
 const MEDIDAS: [Medida, string][] = [
   ['ventas', 'Ventas $'],
@@ -156,13 +157,15 @@ export function MapaCalor() {
             <Tarjeta className="space-y-2 text-sm">
               {r.punta && (
                 <p>
-                  🔥 Hora más fuerte: <b>{NOMBRE_DIA[r.punta.dia].toLowerCase()} de {rangoHora(r.punta.hora)}</b>, con{' '}
+                  <IconoLinea icono={ICONOS.fuerte} />
+                  Hora más fuerte: <b>{NOMBRE_DIA[r.punta.dia].toLowerCase()} de {rangoHora(r.punta.hora)}</b>, con{' '}
                   {valorTexto(r.punta.valor)} en promedio.
                 </p>
               )}
               {r.mejorDia && (
                 <p>
-                  📈 Mejor día: <b>{NOMBRE_DIA[r.mejorDia.dia].toLowerCase()}</b> ({valorTexto(r.mejorDia.valor)} en un día promedio)
+                  <IconoLinea icono={ICONOS.sube} />
+                  Mejor día: <b>{NOMBRE_DIA[r.mejorDia.dia].toLowerCase()}</b> ({valorTexto(r.mejorDia.valor)} en un día promedio)
                   {r.peorDia && (
                     <>
                       ; el más flojo, <b>{NOMBRE_DIA[r.peorDia.dia].toLowerCase()}</b> ({valorTexto(r.peorDia.valor)}).
@@ -172,12 +175,14 @@ export function MapaCalor() {
               )}
               {r.parteAm != null && (
                 <p>
-                  ☀️ Antes de las 15:00 se hace el <b>{porcentaje(r.parteAm, 0)}</b> y después el {porcentaje(1 - r.parteAm, 0)}.
+                  <IconoLinea icono={ICONOS.dia} />
+                  Antes de las 15:00 se hace el <b>{porcentaje(r.parteAm, 0)}</b> y después el {porcentaje(1 - r.parteAm, 0)}.
                 </p>
               )}
               {r.flojas.length > 0 && (
                 <p>
-                  💤 Horas flojas (menos de un cuarto de la hora más fuerte):{' '}
+                  <IconoLinea icono={ICONOS.flojo} />
+                  Horas flojas (menos de un cuarto de la hora más fuerte):{' '}
                   <b>{r.flojas.map((h) => `${String(h).padStart(2, '0')}:00`).join(', ')}</b>. Buen momento para hornear, ordenar o
                   probar una promoción.
                 </p>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useConfirmar } from '../../componentes/Confirmar'
-import { Aviso, Boton, Campo, Encabezado, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Campo, Encabezado, Interruptor, Pestanas, Selector, Tarjeta, Titulo } from '../../componentes/ui'
 import {
   calcularFinanzas,
   CATEGORIAS_GASTO,
@@ -15,6 +15,7 @@ import { decimal, fechaDia, hoyIso, leerNumero, numero, pesos, porcentaje } from
 import { mensajeError, supabase } from '../../lib/supabase'
 import { BarraMeta } from './BarraMeta'
 import { PESTANAS_FINANZAS, SelectorMes } from './SelectorMes'
+import { ICONOS } from '../../componentes/iconos'
 
 const primeroDelMes = (iso: string) => `${iso.slice(0, 7)}-01`
 
@@ -60,7 +61,7 @@ function Contenido({ d, recargar }: { d: DatosFinanzas; recargar: () => Promise<
     <div className="space-y-6">
       {/* 1. Meta */}
       <section>
-        <h2 className="mb-2 text-lg font-semibold">🎯 Meta del mes</h2>
+        <Titulo icono={ICONOS.meta}>Meta del mes</Titulo>
         <Tarjeta className="space-y-3">
           {d.gastos.length === 0 ? (
             <p className="text-sm text-suave">
@@ -118,7 +119,7 @@ function Contenido({ d, recargar }: { d: DatosFinanzas; recargar: () => Promise<
 
       {/* 2. Resultado real */}
       <section>
-        <h2 className="mb-2 text-lg font-semibold">📊 Resultado real</h2>
+        <Titulo icono={ICONOS.resultado}>Resultado real</Titulo>
         <Tarjeta className="space-y-1.5 text-sm">
           <Fila etiqueta="Ventas (con IVA)" valor={f.ventas} />
           <Fila etiqueta="IVA de las ventas" valor={-f.iva} suave />
@@ -234,7 +235,7 @@ function Gastos({ d, f, recargar }: { d: DatosFinanzas; f: ReturnType<typeof cal
   return (
     <section>
       <div className="mb-2 flex items-baseline justify-between">
-        <h2 className="text-lg font-semibold">💳 Gastos del mes</h2>
+        <Titulo icono={ICONOS.gastos} className="">Gastos del mes</Titulo>
         <span className="cifra font-semibold">{pesos(f.gastos)}</span>
       </div>
       {d.gastos.length > 0 && (
@@ -285,11 +286,11 @@ function Gastos({ d, f, recargar }: { d: DatosFinanzas; f: ReturnType<typeof cal
         </Tarjeta>
       ) : (
         <div className="space-y-2">
-          <Boton variante="secundario" onClick={() => setEditando('nuevo')}>
-            + Agregar gasto
+          <Boton icono={ICONOS.agregar} variante="secundario" onClick={() => setEditando('nuevo')}>
+            Agregar gasto
           </Boton>
           {d.gastos.length === 0 && (
-            <Boton variante="texto" onClick={copiarAnterior} cargando={copiando}>
+            <Boton icono={ICONOS.copiar} variante="texto" onClick={copiarAnterior} cargando={copiando}>
               Copiar los gastos fijos del mes anterior
             </Boton>
           )}
@@ -377,15 +378,15 @@ function FormGasto({
       <Campo etiqueta="Nota (opcional)" value={nota} onChange={(e) => setNota(e.target.value)} maxLength={200} />
       {error && <Aviso>{error}</Aviso>}
       <div className="grid grid-cols-2 gap-2">
-        <Boton variante="secundario" onClick={() => alTerminar()}>
+        <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => alTerminar()}>
           Cancelar
         </Boton>
-        <Boton onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
           Guardar
         </Boton>
       </div>
       {alBorrar && (
-        <Boton variante="texto" className="text-peligro" onClick={alBorrar}>
+        <Boton icono={ICONOS.borrar} variante="texto" className="text-peligro" onClick={alBorrar}>
           Borrar gasto
         </Boton>
       )}
@@ -426,7 +427,7 @@ function Comisiones({ d, recargar }: { d: DatosFinanzas; recargar: () => Promise
           <Campo etiqueta="Crédito (%)" inputMode="decimal" value={credito} onChange={(e) => setCredito(e.target.value)} />
         </div>
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
-        <Boton variante="secundario" onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} variante="secundario" onClick={guardar} cargando={guardando}>
           Guardar comisiones
         </Boton>
         {d.por_medio.length > 0 && (

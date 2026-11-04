@@ -7,6 +7,7 @@ import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import type { DetalleVentas, DiaVenta } from '../../lib/ventas'
 import { DetalleTurnos, ListaBoletas, ListaProductos, PestanasDesglose, ResumenVentas, type Pestana } from './Desglose'
+import { ICONOS } from '../../componentes/iconos'
 
 const finDeMes = (mes: string) => sumarDias(moverMes(mes, 1), -1)
 
@@ -14,7 +15,7 @@ function Navegacion({ anterior, siguiente, titulo, subtitulo }: { anterior: stri
   return (
     <div className="mb-4 flex items-center justify-between rounded-2xl border border-borde bg-superficie">
       <Link to={anterior} aria-label="Anterior" className="flex h-12 w-14 items-center justify-center text-2xl text-primario">
-        ‹
+        <ICONOS.anterior className="mx-auto block h-6 w-6" aria-hidden />
       </Link>
       <span className="text-center">
         <span className="block font-semibold first-letter:uppercase">{titulo}</span>
@@ -22,7 +23,7 @@ function Navegacion({ anterior, siguiente, titulo, subtitulo }: { anterior: stri
       </span>
       {siguiente ? (
         <Link to={siguiente} aria-label="Siguiente" className="flex h-12 w-14 items-center justify-center text-2xl text-primario">
-          ›
+          <ICONOS.siguiente className="mx-auto block h-6 w-6" aria-hidden />
         </Link>
       ) : (
         <span className="h-12 w-14" />

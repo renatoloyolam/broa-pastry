@@ -1,9 +1,11 @@
+import type { LucideIcon } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { fechaDia, nombreDia, pesos, porcentaje } from '../../lib/formato'
 import { diasDesdeRespaldo } from '../../lib/respaldo'
 import { supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 type Alerta =
   | { codigo: 'dias_sin_ventas'; nivel: string; fechas: string[] }
@@ -12,20 +14,18 @@ type Alerta =
   | { codigo: 'mermas_altas'; nivel: string; casos: { periodo: 'dia' | 'semana'; fecha: string; valor: number; umbral: number }[] }
   | { codigo: 'variacion_costo'; nivel: string; umbral: number; cambios: { nombre: string; desde: string; antes: number; ahora: number; variacion: number }[] }
 
-function Tarjeta({ icono, titulo, children, enlace }: { icono: string; titulo: ReactNode; children?: ReactNode; enlace?: { a: string; texto: string } }) {
+function Tarjeta({ icono: Icono, titulo, children, enlace }: { icono: LucideIcon; titulo: ReactNode; children?: ReactNode; enlace?: { a: string; texto: string } }) {
   const [abierta, setAbierta] = useState(false)
   return (
     <li className="px-4 py-3">
       <button type="button" onClick={() => setAbierta(!abierta)} aria-expanded={abierta} className="flex w-full items-start gap-3 text-left">
-        <span className="text-xl" aria-hidden>
-          {icono}
-        </span>
+        <Icono className="mt-0.5 h-5 w-5 shrink-0 text-aviso" aria-hidden />
         <span className="flex-1 text-sm leading-snug">{titulo}</span>
-        {children && <span className="text-suave" aria-hidden>{abierta ? '▴' : '▾'}</span>}
+        {children && <ICONOS.expandir className={`h-5 w-5 shrink-0 text-suave transition-transform ${abierta ? 'rotate-180' : ''}`} aria-hidden />}
       </button>
-      {abierta && children && <div className="mt-2 pl-9 text-sm">{children}</div>}
+      {abierta && children && <div className="mt-2 pl-8 text-sm">{children}</div>}
       {enlace && (
-        <Link to={enlace.a} className="mt-1 inline-block pl-9 text-sm font-semibold text-primario">
+        <Link to={enlace.a} className="mt-1 inline-block pl-8 text-sm font-semibold text-primario">
           {enlace.texto} →
         </Link>
       )}
@@ -63,7 +63,7 @@ export function AlertasInicio() {
       <ul className="divide-y divide-borde">
         {pedirRespaldo && (
           <Tarjeta
-            icono="💾"
+            icono={ICONOS.respaldo}
             titulo={diasRespaldo == null ? 'Aún no has descargado un respaldo de la app.' : `Hace ${diasRespaldo} días que no descargas un respaldo.`}
             enlace={{ a: '/mas/respaldo', texto: 'Descargar respaldo' }}
           />
@@ -74,7 +74,7 @@ export function AlertasInicio() {
               return (
                 <Tarjeta
                   key={a.codigo}
-                  icono="📅"
+                  icono={ICONOS.calendario}
                   titulo={
                     a.fechas.length === 1 ? (
                       <>Falta subir las ventas del <b>{fechaDia(a.fechas[0])}</b>.</>
@@ -99,7 +99,7 @@ export function AlertasInicio() {
               return (
                 <Tarjeta
                   key={a.codigo}
-                  icono="🏷️"
+                  icono={ICONOS.costo}
                   titulo={
                     <>
                       <b>{a.productos.length} productos</b> vendidos en los últimos {a.dias} días no tienen costo ({pesos(a.total)} en ventas
@@ -125,7 +125,7 @@ export function AlertasInicio() {
               return (
                 <Tarjeta
                   key={a.codigo}
-                  icono="📉"
+                  icono={ICONOS.baja}
                   titulo={
                     <>
                       <b>{a.productos.length} productos</b> con margen bajo el {porcentaje(a.minimo, 0)} (últimos {a.dias} días).
@@ -148,7 +148,7 @@ export function AlertasInicio() {
               return (
                 <Tarjeta
                   key={a.codigo}
-                  icono="🗑️"
+                  icono={ICONOS.mermas}
                   titulo={
                     <>
                       Mermas sobre el límite:{' '}
@@ -170,7 +170,7 @@ export function AlertasInicio() {
               return (
                 <Tarjeta
                   key={a.codigo}
-                  icono="⚖️"
+                  icono={ICONOS.variacion}
                   titulo={
                     <>
                       Cambió fuerte el costo de <b>{a.cambios.length === 1 ? a.cambios[0].nombre : `${a.cambios.length} productos`}</b> (más de{' '}

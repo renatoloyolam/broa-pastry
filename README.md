@@ -76,7 +76,7 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
-### Resumen semanal (Inicio → 📬 de lunes a miércoles, o la notificación)
+### Resumen semanal (Inicio → Resumen, o la notificación)
 Ventas de la semana contra la anterior, clientes, ticket, ganancia, margen y mermas (según permisos),
 día a día, lo más vendido, y la meta del mes con los pagos de la semana. **Notificación cada lunes**
 (16:00 UTC: 13:00 en verano / 12:00 en invierno) para quien la active en Más → Mi cuenta → Resumen
@@ -104,7 +104,7 @@ de las últimas 4, 8 o 12 semanas, para todo o una categoría. Más oscuro = se 
 hora más fuerte, el mejor y el peor día, cuánto se vende antes y después de las 15:00, y las horas
 flojas. Tocando un cuadro se ve su promedio. Lo ven todos los usuarios (no muestra costos).
 
-### Simulador de precios (Productos → Mapa → Simulador, o "Simular precio" en cada producto)
+### Simulador de precios (Productos → Simulador, o "Simular" en cada producto)
 Prueba un precio nuevo (o un costo nuevo) y ve cómo cambia la ganancia del mes, usando lo vendido en
 los últimos 90 días. Indica cuánto podrían bajar las ventas sin perder ("aunque vendas 25% menos,
 ganas lo mismo") y ofrece precios para llegar a un margen de 50, 60 o 70%. En modo categoría
@@ -224,6 +224,7 @@ src/
   lib/            cálculos, formato chileno, importador, costeo, períodos, exportación, respaldo
   sesion/         sesión, permisos, cierre por inactividad
   componentes/    piezas visuales, navegación, gráfico, confirmaciones, Face ID
+                  (iconos.ts: un icono por función; agrega ahí antes de usar uno nuevo)
   paginas/        pantallas (inicio, ventas, productos, mermas, pedidos, alertas, exportar…)
 supabase/
   migrations/     estructura y seguridad de la base de datos

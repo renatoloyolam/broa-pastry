@@ -1,70 +1,22 @@
-import { Suspense, type ReactNode } from 'react'
+import type { LucideIcon } from 'lucide-react'
+import { Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useSesion, type Permiso } from '../sesion/SesionProvider'
+import { ICONOS } from './iconos'
 
 interface Seccion {
   a: string
   texto: string
-  icono: ReactNode
+  icono: LucideIcon
   permiso?: Permiso
 }
 
-const trazo = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
-
 const SECCIONES: Seccion[] = [
-  {
-    a: '/',
-    texto: 'Inicio',
-    icono: (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...trazo}>
-        <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />
-      </svg>
-    ),
-  },
-  {
-    a: '/ventas',
-    texto: 'Ventas',
-    permiso: 'ver_ventas',
-    icono: (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...trazo}>
-        <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" />
-        <path d="M9 8h6M9 12h6" />
-      </svg>
-    ),
-  },
-  {
-    a: '/productos',
-    texto: 'Productos',
-    permiso: 'ver_costos',
-    icono: (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...trazo}>
-        <path d="M4 12h16v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
-        <path d="M4 12c0-2 1.5-3 3-3h10c1.5 0 3 1 3 3" />
-        <path d="M12 9V5M12 5c-1-1-1-2 0-3 1 1 1 2 0 3" />
-      </svg>
-    ),
-  },
-  {
-    a: '/mermas',
-    texto: 'Mermas',
-    permiso: 'registrar_mermas',
-    icono: (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...trazo}>
-        <path d="M4 7h16M9 7V4h6v3M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
-      </svg>
-    ),
-  },
-  {
-    a: '/mas',
-    texto: 'Más',
-    icono: (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" {...trazo}>
-        <circle cx="5" cy="12" r="1.3" />
-        <circle cx="12" cy="12" r="1.3" />
-        <circle cx="19" cy="12" r="1.3" />
-      </svg>
-    ),
-  },
+  { a: '/', texto: 'Inicio', icono: ICONOS.inicio },
+  { a: '/ventas', texto: 'Ventas', permiso: 'ver_ventas', icono: ICONOS.ventas },
+  { a: '/productos', texto: 'Productos', permiso: 'ver_costos', icono: ICONOS.productos },
+  { a: '/mermas', texto: 'Mermas', permiso: 'registrar_mermas', icono: ICONOS.mermas },
+  { a: '/mas', texto: 'Más', icono: ICONOS.mas },
 ]
 
 export function Marco() {
@@ -93,7 +45,7 @@ export function Marco() {
                   }`
                 }
               >
-                {s.icono}
+                <s.icono className="h-6 w-6" strokeWidth={1.9} aria-hidden />
                 {s.texto}
               </NavLink>
             </li>

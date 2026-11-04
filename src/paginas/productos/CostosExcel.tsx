@@ -9,6 +9,7 @@ import { armarFilas, crearPlantillaExcel, leerPlantilla, type ResultadoPlantilla
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 export function CostosExcel() {
   const catalogo = useCatalogo()
@@ -108,7 +109,7 @@ export function CostosExcel() {
             {numero(filas.length)} filas (productos y opciones) con sus costos actuales.
             {sinCosto > 0 && ` ${numero(sinCosto)} aún no tienen costo.`} Trae instrucciones en la primera hoja.
           </p>
-          <Boton onClick={descargar} cargando={descargando}>
+          <Boton icono={ICONOS.descargar} onClick={descargar} cargando={descargando}>
             Descargar plantilla
           </Boton>
         </Tarjeta>
@@ -124,7 +125,7 @@ export function CostosExcel() {
               className="hidden"
               onChange={(e) => e.target.files?.[0] && alElegir(e.target.files[0])}
             />
-            <Boton variante="secundario" onClick={() => entrada.current?.click()} cargando={leyendo}>
+            <Boton icono={ICONOS.subir} variante="secundario" onClick={() => entrada.current?.click()} cargando={leyendo}>
               Subir plantilla
             </Boton>
           </Tarjeta>
@@ -171,7 +172,7 @@ export function CostosExcel() {
                     </li>
                   ))}
                 </ul>
-                <Boton onClick={aplicar} cargando={aplicando} className="min-h-14">
+                <Boton icono={ICONOS.aplicar} onClick={aplicar} cargando={aplicando} className="min-h-14">
                   Aplicar {numero(resultado.cambios.length)} cambios
                 </Boton>
               </>
@@ -194,7 +195,7 @@ export function CostosExcel() {
                     onChange={(e) => setCorregirDesde(e.target.value)}
                     ayuda="Se aplica a todos los costos que cambiaron hoy."
                   />
-                  <Boton variante="secundario" disabled={!corregirDesde} onClick={aplicarDesde}>
+                  <Boton icono={ICONOS.aplicar} variante="secundario" disabled={!corregirDesde} onClick={aplicarDesde}>
                     Aplicar desde esa fecha
                   </Boton>
                 </div>

@@ -3,6 +3,7 @@ import { Aviso, Boton, Campo, Encabezado, Interruptor, Tarjeta } from '../../com
 import { decimal, leerNumero } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 interface Umbrales {
   margen_minimo: number
@@ -169,7 +170,7 @@ export function ConfigAlertas() {
         </Tarjeta>
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
         {esDueno && (
-          <Boton onClick={guardar} cargando={guardando}>
+          <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
             Guardar
           </Boton>
         )}

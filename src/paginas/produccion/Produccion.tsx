@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Aviso, Boton, Encabezado, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Encabezado, IconoLinea, Selector, Tarjeta } from '../../componentes/ui'
 import { fechaDia, hoyIso, nombreDia, numero, pesos, porcentaje } from '../../lib/formato'
 import { sumarDias } from '../../lib/periodos'
 import { calcularProduccion, textoParaCompartir, type DatosProduccion, type Sugerencia } from '../../lib/produccion'
 import { mensajeError, supabase } from '../../lib/supabase'
+import { ICONOS } from '../../componentes/iconos'
 
 export function Produccion() {
   const hoy = hoyIso()
@@ -115,8 +116,8 @@ export function Produccion() {
             )}
             {r.regulares.length > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-2">
-                <Boton onClick={compartir}>{copiado ? 'Copiado ✓' : 'Compartir lista'}</Boton>
-                <Boton variante="secundario" onClick={() => window.print()}>
+                <Boton icono={ICONOS.compartir} onClick={compartir}>{copiado ? 'Copiado ✓' : 'Compartir lista'}</Boton>
+                <Boton icono={ICONOS.imprimir} variante="secundario" onClick={() => window.print()}>
                   Imprimir
                 </Boton>
               </div>
@@ -131,7 +132,8 @@ export function Produccion() {
           )}
           {!r.hayMermas && d.dias.length > 0 && (
             <Aviso tipo="info">
-              💡 Registra las mermas al cierre de cada día: así la app sabe cuánto sobra y ajusta la sugerencia para botar menos.
+              <IconoLinea icono={ICONOS.idea} />
+              Registra las mermas al cierre de cada día: así la app sabe cuánto sobra y ajusta la sugerencia para botar menos.
             </Aviso>
           )}
           {d.ver_costos && r.ahorroDia > 0 && (

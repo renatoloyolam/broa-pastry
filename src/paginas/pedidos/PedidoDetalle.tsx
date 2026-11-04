@@ -6,6 +6,7 @@ import { decimal, fechaDia, hoyIso, leerNumero, pesos } from '../../lib/formato'
 import { linkWhatsapp, type Abono, type EstadoPedido } from '../../lib/pedidos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 const MEDIOS = ['Efectivo', 'Débito', 'Crédito', 'Transferencia']
 
@@ -337,7 +338,7 @@ export function PedidoDetalle() {
 
         {error && <Aviso>{error}</Aviso>}
         {ok && <Aviso tipo="ok">{ok}</Aviso>}
-        <Boton onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
           {esNuevo ? 'Crear pedido' : 'Guardar cambios'}
         </Boton>
 
@@ -398,10 +399,10 @@ export function PedidoDetalle() {
                     ))}
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <Boton variante="secundario" onClick={() => setNuevoAbono({ ...nuevoAbono, monto: decimal(saldo) })}>
+                    <Boton icono={ICONOS.pagar} variante="secundario" onClick={() => setNuevoAbono({ ...nuevoAbono, monto: decimal(saldo) })}>
                       Pagar todo
                     </Boton>
-                    <Boton onClick={agregarAbono}>Registrar abono</Boton>
+                    <Boton icono={ICONOS.abono} onClick={agregarAbono}>Registrar abono</Boton>
                   </div>
                 </Tarjeta>
               )}
@@ -409,21 +410,21 @@ export function PedidoDetalle() {
 
             <section className="space-y-2">
               {estado === 'pendiente' && (
-                <Boton onClick={() => cambiarEstado('entregado')} className="min-h-14">
+                <Boton icono={ICONOS.entregado} onClick={() => cambiarEstado('entregado')} className="min-h-14">
                   Marcar como entregado
                 </Boton>
               )}
               {estado !== 'pendiente' && (
-                <Boton variante="secundario" onClick={() => cambiarEstado('pendiente')}>
+                <Boton icono={ICONOS.deshacer} variante="secundario" onClick={() => cambiarEstado('pendiente')}>
                   Volver a pendiente
                 </Boton>
               )}
               {estado === 'pendiente' && (
-                <Boton variante="peligro" onClick={() => cambiarEstado('cancelado')}>
+                <Boton icono={ICONOS.cancelar} variante="peligro" onClick={() => cambiarEstado('cancelado')}>
                   Cancelar pedido
                 </Boton>
               )}
-              <Boton variante="texto" onClick={eliminar}>
+              <Boton icono={ICONOS.borrar} variante="texto" onClick={eliminar}>
                 Eliminar (anotado por error)
               </Boton>
             </section>

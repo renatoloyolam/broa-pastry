@@ -1,8 +1,10 @@
+import type { LucideIcon } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Tarjeta } from '../../componentes/ui'
 import { numero, pesos, porcentaje } from '../../lib/formato'
 import type { DetalleVentas } from '../../lib/ventas'
 import { normalizar } from '../../lib/importador'
+import { ICONOS } from '../../componentes/iconos'
 
 /** Resumen de arriba: ventas, clientes, ticket, unidades… */
 export function ResumenVentas({ d, extra }: { d: DetalleVentas; extra?: ReactNode }) {
@@ -38,23 +40,32 @@ function Dato({ titulo, valor }: { titulo: string; valor: string }) {
 }
 
 export type Pestana = 'dias' | 'productos' | 'detalle' | 'boletas'
-const TEXTO: Record<Pestana, string> = { dias: 'Días', productos: 'Productos', detalle: 'Turnos y pagos', boletas: 'Boletas' }
+const PESTANAS: Record<Pestana, { texto: string; icono: LucideIcon }> = {
+  dias: { texto: 'Días', icono: ICONOS.calendario },
+  productos: { texto: 'Productos', icono: ICONOS.productos },
+  detalle: { texto: 'Turnos y pagos', icono: ICONOS.gastos },
+  boletas: { texto: 'Boletas', icono: ICONOS.ventas },
+}
 
 export function PestanasDesglose({ opciones, activa, onCambio }: { opciones: Pestana[]; activa: Pestana; onCambio: (p: Pestana) => void }) {
   return (
     <div className="mb-3 flex gap-1 rounded-2xl bg-superficie-2 p-1" role="tablist">
-      {opciones.map((p) => (
-        <button
-          key={p}
-          type="button"
-          role="tab"
-          aria-selected={activa === p}
-          onClick={() => onCambio(p)}
-          className={`min-h-10 flex-1 rounded-xl text-sm font-semibold ${activa === p ? 'bg-superficie text-primario shadow-sm' : 'text-suave'}`}
-        >
-          {TEXTO[p]}
-        </button>
-      ))}
+      {opciones.map((p) => {
+        const { texto, icono: Icono } = PESTANAS[p]
+        return (
+          <button
+            key={p}
+            type="button"
+            role="tab"
+            aria-selected={activa === p}
+            onClick={() => onCambio(p)}
+            className={`flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold ${activa === p ? 'bg-superficie text-primario shadow-sm' : 'text-suave'}`}
+          >
+            <Icono className="h-5 w-5 shrink-0" aria-hidden />
+            {texto}
+          </button>
+        )
+      })}
     </div>
   )
 }

@@ -7,6 +7,7 @@ import {
   type EstadoNotificaciones,
 } from '../lib/notificaciones'
 import { Aviso, Boton, Tarjeta } from './ui'
+import { ICONOS } from './iconos'
 
 /** Activar el resumen semanal como notificación en este teléfono (Mi cuenta). */
 export function SeccionNotificaciones() {
@@ -54,7 +55,7 @@ export function SeccionNotificaciones() {
           </Aviso>
         )}
         {estado === 'inactivas' && (
-          <Boton onClick={() => hacer(activarNotificaciones, 'Listo: este teléfono recibirá el resumen cada lunes.')} cargando={trabajando}>
+          <Boton icono={ICONOS.notificar} onClick={() => hacer(activarNotificaciones, 'Listo: este teléfono recibirá el resumen cada lunes.')} cargando={trabajando}>
             Activar en este teléfono
           </Boton>
         )}
@@ -63,13 +64,14 @@ export function SeccionNotificaciones() {
             <p className="text-sm font-semibold text-exito">✓ Activas en este teléfono</p>
             <div className="grid grid-cols-2 gap-2">
               <Boton
+                icono={ICONOS.enviar}
                 variante="secundario"
                 onClick={() => hacer(enviarPrueba, 'Enviado: debería llegarte en unos segundos.')}
                 cargando={trabajando}
               >
                 Enviarme uno ahora
               </Boton>
-              <Boton variante="peligro" onClick={() => hacer(desactivarNotificaciones, 'Desactivadas en este teléfono.')} disabled={trabajando}>
+              <Boton icono={ICONOS.silenciar} variante="peligro" onClick={() => hacer(desactivarNotificaciones, 'Desactivadas en este teléfono.')} disabled={trabajando}>
                 Desactivar
               </Boton>
             </div>

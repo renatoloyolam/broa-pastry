@@ -20,6 +20,7 @@ import {
 } from '../../lib/importador'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { Aviso, Boton, Encabezado, Selector, Tarjeta } from '../../componentes/ui'
+import { ICONOS } from '../../componentes/iconos'
 
 interface Categoria {
   id: number
@@ -288,7 +289,7 @@ export function Importar() {
             className="hidden"
             onChange={(e) => e.target.files?.[0] && alElegir(e.target.files[0])}
           />
-          <Boton onClick={() => entrada.current?.click()} className="min-h-16 text-lg">
+          <Boton icono={ICONOS.excel} onClick={() => entrada.current?.click()} className="min-h-16 text-lg">
             Elegir archivo Excel
           </Boton>
         </div>
@@ -300,7 +301,7 @@ export function Importar() {
         <div className="space-y-4">
           <Aviso tipo="info">{estado.mensaje}</Aviso>
           {estado.titulos.length === 0 ? (
-            <Boton variante="secundario" onClick={() => setEstado({ paso: 'elegir' })}>
+            <Boton icono={ICONOS.archivo} variante="secundario" onClick={() => setEstado({ paso: 'elegir' })}>
               Elegir otro archivo
             </Boton>
           ) : (
@@ -322,6 +323,7 @@ export function Importar() {
               ))}
               <p className="text-xs text-suave">Este mapeo se recuerda para las próximas importaciones.</p>
               <Boton
+                icono={ICONOS.listo}
                 onClick={() => {
                   setError('')
                   setEstado({ paso: 'leyendo' })
@@ -330,7 +332,7 @@ export function Importar() {
               >
                 Usar estas columnas
               </Boton>
-              <Boton variante="texto" onClick={() => setEstado({ paso: 'elegir' })}>
+              <Boton icono={ICONOS.archivo} variante="texto" onClick={() => setEstado({ paso: 'elegir' })}>
                 Elegir otro archivo
               </Boton>
             </Tarjeta>
@@ -389,7 +391,7 @@ export function Importar() {
           >
             Ver ventas
           </Link>
-          <Boton variante="secundario" onClick={() => setEstado({ paso: 'elegir' })}>
+          <Boton icono={ICONOS.importar} variante="secundario" onClick={() => setEstado({ paso: 'elegir' })}>
             Importar otro archivo
           </Boton>
         </div>
@@ -623,11 +625,11 @@ function Revision({
       )}
 
       {nuevas.length > 0 && (
-        <Boton onClick={onConfirmar} className="min-h-14">
+        <Boton icono={ICONOS.importar} onClick={onConfirmar} className="min-h-14">
           Importar {numero(nuevas.length)} transacciones
         </Boton>
       )}
-      <Boton variante="secundario" onClick={onCancelar}>
+      <Boton icono={ICONOS.cancelar} variante="secundario" onClick={onCancelar}>
         {nuevas.length > 0 ? 'Cancelar' : 'Elegir otro archivo'}
       </Boton>
     </div>

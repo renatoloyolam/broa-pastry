@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Aviso, Encabezado, Tarjeta } from '../../componentes/ui'
+import { Acceso, Aviso, Encabezado, Tarjeta, Titulo } from '../../componentes/ui'
 import { calcularFinanzas, nombreMes, proximosPagos, type DatosFinanzas } from '../../lib/finanzas'
 import { fechaDia, hoyIso, nombreDia, numero, pesos, porcentaje } from '../../lib/formato'
 import { ganancia, margen, ticketPromedio, variacion, type DiaPanel, type ProductoPanel, type ResumenPanel } from '../../lib/panel'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { BarraMeta } from '../finanzas/BarraMeta'
+import { ICONOS } from '../../componentes/iconos'
 
 interface DatosSemana {
   desde: string
@@ -82,7 +83,7 @@ export function ResumenSemanal() {
       <Encabezado titulo="Resumen semanal" volver="/" />
       <div className="mb-4 flex items-center justify-between rounded-2xl border border-borde bg-superficie">
         <button type="button" aria-label="Semana anterior" onClick={() => setLunes(sumarDias(lunes, -7))} className="h-12 w-14 text-2xl text-primario">
-          ‹
+          <ICONOS.anterior className="mx-auto block h-6 w-6" aria-hidden />
         </button>
         <span className="text-center text-sm font-semibold">
           {fechaDia(lunes).slice(0, 5)} al {fechaDia(sumarDias(lunes, 6)).slice(0, 5)}
@@ -95,7 +96,7 @@ export function ResumenSemanal() {
           onClick={() => setLunes(sumarDias(lunes, 7))}
           className="h-12 w-14 text-2xl text-primario disabled:opacity-30"
         >
-          ›
+          <ICONOS.siguiente className="mx-auto block h-6 w-6" aria-hidden />
         </button>
       </div>
 
@@ -176,7 +177,7 @@ export function ResumenSemanal() {
 
           {f && fin && (
             <section>
-              <h2 className="mb-2 text-lg font-semibold">🎯 Meta de {nombreMes(fin.mes).split(' ')[0]}</h2>
+              <Titulo icono={ICONOS.meta}>Meta de {nombreMes(fin.mes).split(' ')[0]}</Titulo>
               <Link to="/finanzas" className="block rounded-2xl border border-borde bg-superficie p-4 active:bg-superficie-2">
                 {f.meta == null ? (
                   <span className="text-sm text-suave">Ingresa los gastos fijos del mes para ver la meta.</span>
@@ -204,13 +205,9 @@ export function ResumenSemanal() {
             </section>
           )}
 
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <Link to="/comparar" className="rounded-2xl border border-borde bg-superficie px-4 py-3 text-center font-semibold text-primario">
-              Comparar meses
-            </Link>
-            <Link to="/ventas/horarios" className="rounded-2xl border border-borde bg-superficie px-4 py-3 text-center font-semibold text-primario">
-              Horarios
-            </Link>
+          <div className="grid grid-cols-2 gap-2">
+            <Acceso a="/comparar" icono={ICONOS.comparar} titulo="Comparar meses" />
+            <Acceso a="/ventas/horarios" icono={ICONOS.horarios} titulo="Horarios" />
           </div>
           <p className="text-center text-xs text-suave">
             ¿Quieres que te llegue cada lunes? Actívalo en{' '}

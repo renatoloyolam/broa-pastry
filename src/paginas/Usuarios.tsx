@@ -3,6 +3,7 @@ import { mensajeError, supabase } from '../lib/supabase'
 import { NOMBRE_ROL, useSesion, type Perfil, type Rol } from '../sesion/SesionProvider'
 import { Aviso, Boton, Campo, Encabezado, Tarjeta } from '../componentes/ui'
 import { useConfirmar } from '../componentes/Confirmar'
+import { ICONOS } from '../componentes/iconos'
 
 async function llamarFuncion(cuerpo: Record<string, unknown>): Promise<{ clave_temporal: string }> {
   const { data, error } = await supabase.functions.invoke('gestionar-usuarios', { body: cuerpo })
@@ -31,6 +32,7 @@ function ClaveEntregada({ email, clave, alCerrar }: { email: string; clave: stri
         Al entrar por primera vez, la app le pedirá crear su propia contraseña. Esta contraseña no se volverá a mostrar.
       </p>
       <Boton
+        icono={ICONOS.copiar}
         variante="secundario"
         onClick={async () => {
           try {
@@ -43,7 +45,7 @@ function ClaveEntregada({ email, clave, alCerrar }: { email: string; clave: stri
       >
         {copiada ? 'Copiado ✓' : 'Copiar datos'}
       </Boton>
-      <Boton variante="texto" onClick={alCerrar}>
+      <Boton icono={ICONOS.cancelar} variante="texto" onClick={alCerrar}>
         Cerrar
       </Boton>
     </Tarjeta>
@@ -162,16 +164,16 @@ export function Usuarios() {
                   ))}
                 </div>
               </fieldset>
-              <Boton type="submit" cargando={enviando}>
+              <Boton icono={ICONOS.agregar} type="submit" cargando={enviando}>
                 Crear usuario
               </Boton>
-              <Boton type="button" variante="texto" onClick={() => setCreando(false)}>
+              <Boton icono={ICONOS.cancelar} type="button" variante="texto" onClick={() => setCreando(false)}>
                 Cancelar
               </Boton>
             </form>
           </Tarjeta>
         ) : (
-          <Boton onClick={() => setCreando(true)}>+ Nuevo usuario</Boton>
+          <Boton icono={ICONOS.agregar} onClick={() => setCreando(true)}>Nuevo usuario</Boton>
         )}
 
         {usuarios.map((u) => {
@@ -203,10 +205,11 @@ export function Usuarios() {
               </select>
               {!soyYo && (
                 <div className="grid grid-cols-2 gap-2">
-                  <Boton variante="secundario" className="text-sm" onClick={() => restablecer(u)}>
+                  <Boton icono={ICONOS.clave} variante="secundario" className="text-sm" onClick={() => restablecer(u)}>
                     Nueva contraseña
                   </Boton>
                   <Boton
+                    icono={ICONOS.usuarios}
                     variante={u.activo ? 'peligro' : 'secundario'}
                     className="text-sm"
                     onClick={() => actualizar(u, { activo: !u.activo })}

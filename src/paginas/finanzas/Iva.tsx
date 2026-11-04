@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useConfirmar } from '../../componentes/Confirmar'
-import { Aviso, Boton, Campo, Encabezado, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Campo, Encabezado, IconoLinea, Pestanas, Selector, Tarjeta, Titulo } from '../../componentes/ui'
 import { moverMes, nombreMes } from '../../lib/finanzas'
 import { decimal, fechaDia, hoyIso, leerNumero, numero, pesos } from '../../lib/formato'
 import {
@@ -19,6 +19,7 @@ import {
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { PESTANAS_FINANZAS, SelectorMes } from './SelectorMes'
+import { ICONOS } from '../../componentes/iconos'
 
 const primeroDelMes = (iso: string) => `${iso.slice(0, 7)}-01`
 
@@ -56,7 +57,8 @@ export function Iva() {
           onClick={() => setMes(mesAnterior)}
           className="mb-4 block w-full rounded-2xl border border-aviso/40 bg-superficie px-4 py-3 text-left text-sm active:bg-superficie-2"
         >
-          📅 El IVA de <b>{nombreMes(mesAnterior)}</b> se declara hasta el 20/{hoy.slice(5, 7)}.{' '}
+          <IconoLinea icono={ICONOS.calendario} />
+          El IVA de <b>{nombreMes(mesAnterior)}</b> se declara hasta el 20/{hoy.slice(5, 7)}.{' '}
           <span className="font-semibold text-primario">Ver ese mes ›</span>
         </button>
       )}
@@ -74,7 +76,7 @@ function Contenido({ d, recargar }: { d: DatosIva; recargar: () => Promise<void>
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-lg font-semibold">🧾 IVA estimado de {mesCorto}</h2>
+        <Titulo icono={ICONOS.iva}>IVA estimado de {mesCorto}</Titulo>
         <Tarjeta className="space-y-3">
           <div>
             <p className="text-sm text-suave">{f.ivaPagar > 0 ? 'IVA a pagar' : 'IVA a pagar este mes'}</p>
@@ -100,7 +102,8 @@ function Contenido({ d, recargar }: { d: DatosIva; recargar: () => Promise<void>
           </div>
           {f.apartarPor100mil != null && f.total > 0 && (
             <p className="rounded-xl bg-superficie-2 px-4 py-3 text-sm">
-              💡 Aparta <b className="cifra">{pesos(f.apartarPor100mil)}</b> por cada $100.000 que cobres, para tener el F29 listo.
+              <IconoLinea icono={ICONOS.idea} />
+              Aparta <b className="cifra">{pesos(f.apartarPor100mil)}</b> por cada $100.000 que cobres, para tener el F29 listo.
             </p>
           )}
         </Tarjeta>
@@ -202,7 +205,7 @@ function Compras({ d, recargar }: { d: DatosIva; recargar: () => Promise<void> }
   return (
     <section>
       <div className="mb-2 flex items-baseline justify-between">
-        <h2 className="text-lg font-semibold">📥 Facturas de compra</h2>
+        <Titulo icono={ICONOS.facturas} className="">Facturas de compra</Titulo>
         <span className="cifra text-sm font-semibold">IVA {pesos(ivaTotal)}</span>
       </div>
 
@@ -218,7 +221,7 @@ function Compras({ d, recargar }: { d: DatosIva; recargar: () => Promise<void> }
           className="hidden"
           onChange={(e) => e.target.files?.[0] && subir(e.target.files[0])}
         />
-        <Boton onClick={() => entrada.current?.click()} cargando={subiendo}>
+        <Boton icono={ICONOS.subir} onClick={() => entrada.current?.click()} cargando={subiendo}>
           Subir registro de compras del SII
         </Boton>
         <p className="text-xs text-suave">
@@ -268,12 +271,12 @@ function Compras({ d, recargar }: { d: DatosIva; recargar: () => Promise<void> }
           <FormCompra mes={d.mes} alTerminar={async () => { setEditando(null); await recargar() }} />
         </Tarjeta>
       ) : (
-        <Boton variante="secundario" onClick={() => setEditando('nueva')}>
-          + Agregar factura a mano
+        <Boton icono={ICONOS.agregar} variante="secundario" onClick={() => setEditando('nueva')}>
+          Agregar factura a mano
         </Boton>
       )}
       {d.compras.some((c) => c.origen === 'sii') && (
-        <Boton variante="texto" className="mt-1 text-sm" onClick={borrarSii}>
+        <Boton icono={ICONOS.borrar} variante="texto" className="mt-1 text-sm" onClick={borrarSii}>
           Borrar lo cargado desde el SII este mes
         </Boton>
       )}
@@ -386,15 +389,15 @@ export function FormCompra({
       </Selector>
       {error && <Aviso>{error}</Aviso>}
       <div className="grid grid-cols-2 gap-2">
-        <Boton variante="secundario" onClick={() => alTerminar()}>
+        <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => alTerminar()}>
           Cancelar
         </Boton>
-        <Boton onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
           Guardar
         </Boton>
       </div>
       {alBorrar && (
-        <Boton variante="texto" className="text-peligro" onClick={alBorrar}>
+        <Boton icono={ICONOS.borrar} variante="texto" className="text-peligro" onClick={alBorrar}>
           Borrar documento
         </Boton>
       )}
@@ -443,7 +446,7 @@ function Ajustes({ d, recargar }: { d: DatosIva; recargar: () => Promise<void> }
           ayuda="Pago provisional mensual a cuenta de la renta: un % de las ventas sin IVA. Tu contador sabe qué tasa te corresponde. Se usa para todos los meses."
         />
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
-        <Boton variante="secundario" onClick={guardar} cargando={guardando}>
+        <Boton icono={ICONOS.guardar} variante="secundario" onClick={guardar} cargando={guardando}>
           Guardar
         </Boton>
       </div>

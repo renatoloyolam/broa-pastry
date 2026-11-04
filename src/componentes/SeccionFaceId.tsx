@@ -3,6 +3,7 @@ import { activarFaceId, borrarPasskey, faceIdDisponible, listarPasskeys, mensaje
 import { fechaHora } from '../lib/formato'
 import { useConfirmar } from './Confirmar'
 import { Aviso, Boton, Tarjeta } from './ui'
+import { ICONOS } from './iconos'
 
 /** Activar / quitar el ingreso con Face ID (passkeys) en Mi cuenta. */
 export function SeccionFaceId() {
@@ -78,7 +79,7 @@ export function SeccionFaceId() {
         )}
         {estado && <Aviso tipo={estado.tipo}>{estado.texto}</Aviso>}
         {faceIdDisponible() ? (
-          <Boton onClick={activar} cargando={trabajando}>
+          <Boton icono={ICONOS.faceId} onClick={activar} cargando={trabajando}>
             Activar Face ID en este dispositivo
           </Boton>
         ) : (

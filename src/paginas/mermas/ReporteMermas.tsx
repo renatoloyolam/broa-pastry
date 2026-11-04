@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Aviso, Campo, Encabezado, EstadoVacio, Tarjeta } from '../../componentes/ui'
+import { AccionEnlace, Aviso, Campo, Encabezado, EstadoVacio, Tarjeta } from '../../componentes/ui'
 import { decimal, hoyIso, pesos, porcentaje } from '../../lib/formato'
 import { calcularPeriodo, calcularRango, moverAncla, type TipoPeriodo } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 interface Reporte {
   ver_costos: boolean
@@ -81,9 +82,9 @@ export function ReporteMermas() {
     <>
       <Encabezado titulo="Reporte de mermas" volver="/mermas">
         {puede('editar_configuracion') && (
-          <Link to="/mermas/motivos" className="text-sm font-semibold text-primario">
+          <AccionEnlace a="/mermas/motivos" icono={ICONOS.motivos}>
             Motivos
-          </Link>
+          </AccionEnlace>
         )}
       </Encabezado>
 
@@ -108,7 +109,7 @@ export function ReporteMermas() {
       ) : (
         <div className="mb-4 flex items-center gap-2">
           <button type="button" aria-label="Anterior" onClick={() => setAncla(moverAncla(tipo, ancla, -1))} className="h-11 w-11 rounded-full text-2xl text-primario">
-            ‹
+            <ICONOS.anterior className="mx-auto block h-6 w-6" aria-hidden />
           </button>
           <p className="flex-1 text-center font-semibold">{periodo.etiqueta}</p>
           <button
@@ -118,7 +119,7 @@ export function ReporteMermas() {
             onClick={() => setAncla(moverAncla(tipo, ancla, 1))}
             className="h-11 w-11 rounded-full text-2xl text-primario disabled:opacity-25"
           >
-            ›
+            <ICONOS.siguiente className="mx-auto block h-6 w-6" aria-hidden />
           </button>
         </div>
       )}
@@ -126,7 +127,7 @@ export function ReporteMermas() {
       {error && <Aviso>{error}</Aviso>}
 
       {t && t.registros === 0 && (
-        <EstadoVacio icono="🧺" titulo="Sin mermas en este período">
+        <EstadoVacio icono={ICONOS.mermas} titulo="Sin mermas en este período">
           Registra las mermas al final del día desde la pestaña Mermas.
         </EstadoVacio>
       )}

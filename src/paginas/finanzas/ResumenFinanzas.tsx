@@ -1,3 +1,4 @@
+import { IconoCirculo, IconoLinea } from '../../componentes/ui'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { calcularFinanzas, nombreMes, proximosPagos, type DatosFinanzas } from '../../lib/finanzas'
@@ -5,6 +6,7 @@ import { hoyIso, pesos, porcentaje } from '../../lib/formato'
 import { supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { BarraMeta } from './BarraMeta'
+import { ICONOS } from '../../componentes/iconos'
 
 /** Tarjeta en Inicio: cómo va la meta del mes y el próximo pago. */
 export function ResumenFinanzas() {
@@ -30,9 +32,7 @@ export function ResumenFinanzas() {
     <Link to="/finanzas" className="mb-4 block rounded-2xl border border-borde bg-superficie px-4 py-3 active:bg-superficie-2">
       {f.meta == null ? (
         <span className="flex items-center gap-3 text-sm">
-          <span className="text-2xl" aria-hidden>
-            🎯
-          </span>
+          <IconoCirculo icono={ICONOS.meta} />
           <span className="flex-1">
             <span className="block font-semibold">Meta de {nombreMes(d.mes)}</span>
             <span className="block text-xs text-suave">
@@ -40,13 +40,16 @@ export function ResumenFinanzas() {
             </span>
           </span>
           <span className="text-suave" aria-hidden>
-            ›
+            <ICONOS.siguiente className="block h-5 w-5" />
           </span>
         </span>
       ) : (
         <>
           <span className="mb-2 flex items-baseline justify-between gap-2 text-sm">
-            <span className="font-semibold">🎯 Meta de {nombreMes(d.mes).split(' ')[0]}</span>
+            <span className="font-semibold">
+              <IconoLinea icono={ICONOS.meta} />
+              Meta de {nombreMes(d.mes).split(' ')[0]}
+            </span>
             <span className="cifra font-semibold">{porcentaje(f.avance, 0)}</span>
           </span>
           <BarraMeta avance={f.avance ?? 0} />
@@ -59,7 +62,8 @@ export function ResumenFinanzas() {
       )}
       {pago && (
         <span className={`mt-2 block border-t border-borde pt-2 text-xs ${pago.dias < 0 ? 'text-peligro' : 'text-aviso'}`}>
-          💳 {pago.nombre} {pesos(pago.monto)} ·{' '}
+          <IconoLinea icono={ICONOS.gastos} className="" />
+          {pago.nombre} {pesos(pago.monto)} ·{' '}
           {pago.dias < 0 ? `venció hace ${-pago.dias} día${pago.dias < -1 ? 's' : ''}` : pago.dias === 0 ? 'vence hoy' : `vence en ${pago.dias} día${pago.dias > 1 ? 's' : ''}`}
         </span>
       )}

@@ -1,5 +1,6 @@
+import type { LucideIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Aviso, Encabezado, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Encabezado, Selector, Tarjeta, Titulo } from '../../componentes/ui'
 import {
   compararCategorias,
   compararProductos,
@@ -16,6 +17,7 @@ import type { DatosPanel } from '../../lib/panel'
 import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { ICONOS } from '../../componentes/iconos'
 
 const primeroDelMes = (iso: string) => `${iso.slice(0, 7)}-01`
 const corto = (mes: string) => nombreMes(mes).split(' ')[0]
@@ -201,8 +203,8 @@ export function Comparar() {
 
           {prod && (
             <>
-              <ListaCambios titulo="📈 Lo que más creció" items={prod.suben} mesA={corto(mesA)} />
-              <ListaCambios titulo="📉 Lo que más bajó" items={prod.bajan} mesA={corto(mesA)} />
+              <ListaCambios icono={ICONOS.sube} titulo="Lo que más creció" items={prod.suben} mesA={corto(mesA)} />
+              <ListaCambios icono={ICONOS.baja} titulo="Lo que más bajó" items={prod.bajan} mesA={corto(mesA)} />
               {(prod.nuevos.length > 0 || prod.dejaron.length > 0) && (
                 <details className="rounded-2xl border border-borde bg-superficie px-4 py-3 text-sm">
                   <summary className="cursor-pointer font-semibold">
@@ -245,11 +247,11 @@ export function Comparar() {
   )
 }
 
-function ListaCambios({ titulo, items, mesA }: { titulo: string; items: CambioItem[]; mesA: string }) {
+function ListaCambios({ icono, titulo, items, mesA }: { icono: LucideIcon; titulo: string; items: CambioItem[]; mesA: string }) {
   if (items.length === 0) return null
   return (
     <section>
-      <h2 className="mb-2 text-lg font-semibold">{titulo}</h2>
+      <Titulo icono={icono}>{titulo}</Titulo>
       <ul className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie text-sm">
         {items.map((x) => (
           <li key={x.clave} className="px-4 py-2.5">

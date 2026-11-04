@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Aviso, Boton, Encabezado, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { Aviso, Boton, Encabezado, IconoLinea, Pestanas, Selector, Tarjeta, Titulo } from '../../componentes/ui'
 import { moverMes, nombreMes } from '../../lib/finanzas'
 import { fechaDia, hoyIso, numero, pesos, porcentaje } from '../../lib/formato'
 import { calcularInsumos, type DatosInsumos } from '../../lib/insumos'
@@ -8,6 +8,7 @@ import { sumarDias } from '../../lib/periodos'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { FormCompra } from './Iva'
 import { PESTANAS_FINANZAS, SelectorMes } from './SelectorMes'
+import { ICONOS } from '../../componentes/iconos'
 
 const primeroDelMes = (iso: string) => `${iso.slice(0, 7)}-01`
 
@@ -68,7 +69,7 @@ function Contenido({ d, mes, meses, recargar }: { d: DatosInsumos; mes: string; 
   return (
     <div className="space-y-6">
       <section>
-        <h2 className="mb-2 text-lg font-semibold">🥚 Compras vs. lo que se usó</h2>
+        <Titulo icono={ICONOS.insumos}>Compras vs. lo que se usó</Titulo>
         <Tarjeta className="space-y-4">
           <Barra etiqueta="Compraste (insumos y packaging)" valor={f.comprado} tope={tope} clase="bg-topo" />
           <Barra etiqueta="Se usó según los costos" valor={f.usado} tope={tope} clase="bg-acento" />
@@ -96,7 +97,7 @@ function Contenido({ d, mes, meses, recargar }: { d: DatosInsumos; mes: string; 
 
       <section>
         <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-lg font-semibold">🧺 A quién le compras</h2>
+          <Titulo icono={ICONOS.proveedores} className="">A quién le compras</Titulo>
           <span className="cifra text-sm font-semibold">{pesos(f.comprado)}</span>
         </div>
         {f.proveedores.length === 0 ? (
@@ -135,8 +136,8 @@ function Contenido({ d, mes, meses, recargar }: { d: DatosInsumos; mes: string; 
               />
             </Tarjeta>
           ) : (
-            <Boton variante="secundario" onClick={() => setAgregando(true)}>
-              + Anotar compra con boleta
+            <Boton icono={ICONOS.agregar} variante="secundario" onClick={() => setAgregando(true)}>
+              Anotar compra con boleta
             </Boton>
           )}
         </div>
@@ -145,7 +146,7 @@ function Contenido({ d, mes, meses, recargar }: { d: DatosInsumos; mes: string; 
 
       {f.usoPorCategoria.length > 0 && (
         <section>
-          <h2 className="mb-2 text-lg font-semibold">🍰 En qué se usaron</h2>
+          <Titulo icono={ICONOS.productos}>En qué se usaron</Titulo>
           <Tarjeta className="space-y-1 text-sm">
             {f.usoPorCategoria.map((c) => (
               <Linea key={c.categoria} etiqueta={c.categoria} valor={c.monto} extra={porcentaje(totalCategorias ? c.monto / totalCategorias : null, 0)} />
@@ -179,14 +180,16 @@ function Veredicto({ f, periodo }: { f: ReturnType<typeof calcularInsumos>; peri
   if (f.veredicto === 'calza')
     return (
       <Aviso tipo="ok">
-        ✅ Compras y uso calzan: la diferencia es de {dif} ({pct}). Tus costos reflejan bien lo que gastas.
+        <IconoLinea icono={ICONOS.correcto} className="" />
+        Compras y uso calzan: la diferencia es de {dif} ({pct}). Tus costos reflejan bien lo que gastas.
       </Aviso>
     )
   if (f.veredicto === 'sobra')
     return (
       <div className="rounded-xl border border-aviso/40 px-4 py-3 text-sm">
         <p className="font-semibold text-aviso">
-          ⚠️ Compraste {dif} más de lo que se usó ({pct} más)
+          <IconoLinea icono={ICONOS.cuidado} className="" />
+          Compraste {dif} más de lo que se usó ({pct} más)
         </p>
         <p className="mt-1">Puede ser:</p>
         <ul className="ml-5 list-disc text-suave">
@@ -200,7 +203,8 @@ function Veredicto({ f, periodo }: { f: ReturnType<typeof calcularInsumos>; peri
   return (
     <div className="rounded-xl border border-borde px-4 py-3 text-sm">
       <p className="font-semibold">
-        🔎 Compraste {dif} menos de lo que se usó ({pct} menos)
+        <IconoLinea icono={ICONOS.buscar} />
+        Compraste {dif} menos de lo que se usó ({pct} menos)
       </p>
       <p className="mt-1">Puede ser:</p>
       <ul className="ml-5 list-disc text-suave">
@@ -241,7 +245,7 @@ function PorClasificar({ f, recargar }: { f: ReturnType<typeof calcularInsumos>;
 
   return (
     <section>
-      <h2 className="mb-1 text-lg font-semibold">🏷️ Proveedores por clasificar</h2>
+      <Titulo icono={ICONOS.categorias} className="mb-1">Proveedores por clasificar</Titulo>
       <p className="mb-2 text-sm text-suave">
         {pesos(f.montoPorClasificar)} en compras del SII sin categoría. Dinos qué le compras a cada uno: se recuerda para los
         próximos meses.
