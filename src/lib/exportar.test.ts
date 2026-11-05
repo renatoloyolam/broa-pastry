@@ -18,6 +18,22 @@ const panel = (verCostos: boolean): DatosPanel => ({
 })
 const periodo = { desde: '2026-10-10', hasta: '2026-10-10', etiqueta: '10/10/2026' }
 
+describe('hoja de mermas', () => {
+  it('incluye producción y materia prima, e ingredientes y mano de obra por separado', () => {
+    const hojas = hojasReporte(periodo, panel(true), {
+      ver_costos: true,
+      por_motivo: [],
+      por_producto: [],
+      total: { unidades: 0, valor: 0, valor_evitable: 0, unidades_evitables: 0 },
+      perdida: { insumos: 1332, mano_obra: 500 },
+      proceso: { por_item: [{ etapa: 'materia_prima', nombre: 'Frutillas', unidad: 'kg', cantidad: 2, valor: 1332 }] },
+    }, null)
+    const filas = hojas.find((h) => h.nombre === 'Mermas')!.filas
+    expect(filas).toContainEqual(['Frutillas (Materia prima)', '2 kg', 1332])
+    expect(filas).toContainEqual(['Mano de obra perdida', '', 500])
+  })
+})
+
 describe('exportación', () => {
   it('con permiso de costos incluye ganancia y margen', () => {
     const hojas = hojasReporte(periodo, panel(true), null, null)

@@ -31,8 +31,23 @@ tortas y ganancia de la pastelería. Se usa desde el iPhone como una app más, s
   ventas, cambios de costo, respaldo pendiente) y los **pedidos** de hoy y mañana.
 
 ### Mermas (al cierre del día, en 20 segundos)
-**Mermas →** producto, cuántos, motivo, ¿evitable? → **Guardar merma**. Se valorizan al costo del
-día y se descuentan de la ganancia. El **Reporte** las muestra por motivo y por producto.
+Primero eliges **dónde se perdió**:
+- **Producto terminado:** producto, cuántos, motivo, ¿evitable? Se valoriza al costo del día.
+- **En producción:** receta y cuánto (tandas completas, g, kg o unidades). Vale lo que cuesta esa
+  cantidad de receta. Para un cupcake sin crema, crea una **receta base** del cupcake sin terminar.
+- **Materia prima:** ingrediente y cuánto. Por ejemplo, 2 kg de frutillas a $4.453 = $8.906.
+- **No tiene receta / No está en la lista:** describes lo que se perdió y un monto estimado, que
+  queda marcado como estimado.
+
+Todo se descuenta de la ganancia y el **Reporte** lo muestra por etapa, motivo y lo más perdido.
+Algunas reglas:
+- **El valor queda fijo** al registrar: si después sube un ingrediente, no cambia.
+- **Ingredientes y mano de obra van separados.** Inicio descuenta ambos; Finanzas resta solo los
+  ingredientes, porque los sueldos ya están en Gastos. En Insumos cuenta como "lo que se usó".
+- **La encargada anota cantidades y no ve pesos.** Si anota algo sin receta queda **por valorizar**:
+  avisa la campana, se le pone monto arriba de la pantalla Mermas y no se descuenta hasta entonces.
+- La pérdida normal del proceso (recortes, lo que queda en el bol) va en el **rendimiento de la
+  receta**, no como merma. Producción sugerida solo considera las mermas de producto terminado.
 
 ### Pedidos de tortas
 **Más → Pedidos de tortas →** cliente, fecha de entrega, descripción, precio y abonos. Muestra el
@@ -136,7 +151,7 @@ Excel completo, resumen en PDF o CSV para el contador. Quien no ve costos export
 |---|---|
 | **Dueño** | Todo: costos, usuarios, permisos, alertas, respaldo |
 | **Administradora** | Casi todo; el Dueño ajusta sus permisos en **Más → Permisos** |
-| **Encargada de ventas** | Solo ventas, ranking por cantidad y turnos. **Nunca** costos ni ganancia |
+| **Encargada de ventas** | Ventas, ranking por cantidad, turnos y anotar mermas. **Nunca** costos ni ganancia |
 
 - Los usuarios se crean en **Más → Usuarios** (la app da una contraseña temporal para entregar).
 - Las reglas viven **en la base de datos**: aunque alguien revise lo que la app recibe por

@@ -53,7 +53,7 @@ begin
   perform set_config('request.jwt.claims', json_build_object('sub', u_enc, 'role', 'authenticated')::text, true);
   execute 'set local role authenticated';
   s := public.mi_sesion();
-  if (s->'permisos')::text <> '["ver_ventas"]' then
+  if (s->'permisos')::text <> '["ver_ventas", "registrar_mermas"]' then
     raise exception 'FALLO: encargada tiene permisos de más: %', s->'permisos';
   end if;
   select count(*) into n from public.perfiles;

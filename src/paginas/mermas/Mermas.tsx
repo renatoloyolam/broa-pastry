@@ -7,6 +7,14 @@ import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { useConfirmar } from '../../componentes/Confirmar'
 import { ICONOS } from '../../componentes/iconos'
+import { armarRegistro, FORM_VACIO, NOMBRE_ETAPA, type EtapaMerma, type FormProceso, type OpcionesProceso } from '../../lib/mermasProceso'
+import { Chip, FilaProceso, PorValorizar, SeccionProceso, type MermaProcesoDia } from './MermaProceso'
+
+const ETAPAS: { valor: EtapaMerma; icono: typeof ICONOS.mermas; texto: string }[] = [
+  { valor: 'producto', icono: ICONOS.mermaProducto, texto: 'Producto terminado' },
+  { valor: 'produccion', icono: ICONOS.mermaProduccion, texto: 'En producción' },
+  { valor: 'materia_prima', icono: ICONOS.mermaMateriaPrima, texto: 'Materia prima' },
+]
 
 interface ProductoSimple {
   id: number
@@ -34,22 +42,6 @@ interface MermaDia {
   sin_costo: boolean | null
 }
 
-/** Botón tipo "chip" grande, fácil de tocar con el pulgar. */
-function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={activo}
-      onClick={onClick}
-      className={`min-h-11 rounded-full border px-4 text-sm font-medium ${
-        activo ? 'border-primario bg-primario text-primario-texto' : 'border-borde bg-superficie text-texto active:bg-superficie-2'
-      }`}
-    >
-      {children}
-    </button>
-  )
-}
-
 export function Mermas() {
   const { puede } = useSesion()
   const confirmar = useConfirmar()
@@ -71,6 +63,11 @@ export function Mermas() {
   const [error, setError] = useState('')
   const [ok, setOk] = useState('')
   const [lista, setLista] = useState<MermaDia[]>([])
+  const [listaProceso, setListaProceso] = useState<MermaProcesoDia[]>([])
+  const [etapa, setEtapa] = useState<EtapaMerma>('producto')
+  const [form, setForm] = useState<FormProceso>(FORM_VACIO)
+  const [opcionesProceso, setOpcionesProceso] = useState<OpcionesProceso | null>(null)
+  const [version, setVersion] = useState(0)
 
   useEffect(() => {
     Promise.all([
@@ -90,14 +87,27 @@ export function Mermas() {
   }, [hoy])
 
   const cargarLista = useCallback(async () => {
-    const { data, error } = await supabase.rpc('mermas_del_dia', { p_fecha: fecha })
-    if (error) setError(mensajeError(error))
-    else setLista(data as MermaDia[])
+    const [d, m] = await Promise.all([
+      supabase.rpc('mermas_del_dia', { p_fecha: fecha }),
+      supabase.rpc('mermas_proceso_del_dia', { p_fecha: fecha }),
+    ])
+    if (d.error || m.error) return setError(mensajeError(d.error ?? m.error))
+    setLista(d.data as MermaDia[])
+    setListaProceso(m.data as MermaProcesoDia[])
   }, [fecha])
 
   useEffect(() => {
     void cargarLista()
   }, [cargarLista])
+
+  // Recetas e ingredientes (sin precios) recién cuando se necesitan
+  useEffect(() => {
+    if (etapa === 'producto' || opcionesProceso) return
+    supabase.rpc('opciones_merma_proceso').then(({ data, error }) => {
+      if (error) setError(mensajeError(error))
+      else setOpcionesProceso(data as OpcionesProceso)
+    })
+  }, [etapa, opcionesProceso])
 
   const resultados = useMemo(() => {
     const q = normalizar(busqueda)
@@ -120,9 +130,39 @@ export function Mermas() {
     setEvitable(m.evitable_sugerido)
   }
 
+  function cambiarEtapa(e: EtapaMerma) {
+    setEtapa(e)
+    setForm(FORM_VACIO)
+    setError('')
+    setOk('')
+  }
+
+  async function guardarProceso(e: Exclude<EtapaMerma, 'producto'>) {
+    const r = armarRegistro(e, form, { fecha, motivo: motivo?.id ?? null, evitable: evitable ?? motivo?.evitable_sugerido ?? false, nota })
+    if ('error' in r) return setError(r.error)
+    setGuardando(true)
+    const { error } = await supabase.rpc('registrar_merma_proceso', { ...r.args })
+    setGuardando(false)
+    if (error) return setError(mensajeError(error))
+    setOk(`Guardado: ${form.item?.nombre ?? form.descripcion.trim()} (${NOMBRE_ETAPA[e].toLowerCase()})`)
+    setForm(FORM_VACIO)
+    setNota('')
+    setVersion((v) => v + 1)
+    await cargarLista()
+  }
+
+  async function borrarProceso(m: MermaProcesoDia) {
+    if (!(await confirmar({ mensaje: `¿Borrar la merma de ${m.nombre}?`, accion: 'Borrar', peligro: true }))) return
+    const { error } = await supabase.rpc('borrar_merma_proceso', { p_id: m.id })
+    if (error) return setError(mensajeError(error))
+    setVersion((v) => v + 1)
+    await cargarLista()
+  }
+
   async function guardar() {
     setError('')
     setOk('')
+    if (etapa !== 'producto') return guardarProceso(etapa)
     if (!producto) return setError('Elige el producto.')
     if (!(cant > 0)) return setError('Escribe la cantidad.')
     if (!motivo) return setError('Elige el motivo.')
@@ -155,7 +195,9 @@ export function Mermas() {
     await cargarLista()
   }
 
-  const totalValor = lista.reduce((s, m) => s + (m.valor ?? 0), 0)
+  const verCostos = puede('ver_costos')
+  const totalValor = lista.reduce((s, m) => s + (m.valor ?? 0), 0) + listaProceso.reduce((s, m) => s + (m.valor ?? 0), 0)
+  const registros = lista.length + listaProceso.length
 
   return (
     <>
@@ -169,7 +211,37 @@ export function Mermas() {
         </AccionEnlace>
       </nav>
 
+      {verCostos && (
+        <PorValorizar
+          version={version}
+          alCambiar={() => {
+            void cargarLista()
+          }}
+        />
+      )}
+
       <section className="space-y-5 rounded-2xl border border-borde bg-superficie p-4">
+        {/* Dónde ocurrió */}
+        <div>
+          <p className="mb-2 text-sm font-medium text-suave">¿Dónde se perdió?</p>
+          <div className="grid grid-cols-3 gap-2">
+            {ETAPAS.map((e) => (
+              <button
+                key={e.valor}
+                type="button"
+                aria-pressed={etapa === e.valor}
+                onClick={() => cambiarEtapa(e.valor)}
+                className={`flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl border px-1 py-2 text-center text-xs leading-tight font-medium ${
+                  etapa === e.valor ? 'border-primario bg-primario text-primario-texto' : 'border-borde bg-superficie text-texto active:bg-superficie-2'
+                }`}
+              >
+                <e.icono className="h-6 w-6 shrink-0" aria-hidden />
+                {e.texto}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Fecha */}
         <div>
           <p className="mb-2 text-sm font-medium text-suave">¿Cuándo?</p>
@@ -191,6 +263,10 @@ export function Mermas() {
           </div>
         </div>
 
+        {etapa !== 'producto' ? (
+          <SeccionProceso key={etapa} etapa={etapa} opciones={opcionesProceso} form={form} onChange={setForm} />
+        ) : (
+          <>
         {/* Producto */}
         <div>
           <p className="mb-2 text-sm font-medium text-suave">¿Qué producto?</p>
@@ -279,6 +355,9 @@ export function Mermas() {
           </div>
         </div>
 
+          </>
+        )}
+
         {/* Motivo */}
         <div>
           <p className="mb-2 text-sm font-medium text-suave">¿Por qué?</p>
@@ -325,12 +404,15 @@ export function Mermas() {
           <h2 className="text-lg font-semibold">
             {fecha === hoy ? 'Registradas hoy' : `Registradas el ${fechaDia(fecha)}`}
           </h2>
-          {puede('ver_costos') && lista.length > 0 && <span className="cifra font-semibold">{pesos(totalValor)}</span>}
+          {verCostos && registros > 0 && <span className="cifra font-semibold">{pesos(totalValor)}</span>}
         </div>
-        {lista.length === 0 ? (
+        {registros === 0 ? (
           <p className="text-sm text-suave">Todavía no hay mermas para este día.</p>
         ) : (
           <ul className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie">
+            {listaProceso.map((m) => (
+              <FilaProceso key={`p${m.id}`} m={m} verCostos={verCostos} onBorrar={() => borrarProceso(m)} />
+            ))}
             {lista.map((m) => (
               <li key={m.id} className="flex items-center gap-3 px-4 py-3">
                 <span className="cifra w-10 text-center text-lg font-bold">{decimal(m.cantidad)}</span>
@@ -370,8 +452,8 @@ export function Mermas() {
             Las marcadas "sin costo" no se descuentan de la ganancia hasta que el producto tenga costo.
           </p>
         )}
-        {lista.length > 0 && (
-          <p className="mt-2 text-xs text-suave">{numero(lista.length)} registros. Toca × para borrar uno anotado por error.</p>
+        {registros > 0 && (
+          <p className="mt-2 text-xs text-suave">{numero(registros)} registros. Toca × para borrar uno anotado por error.</p>
         )}
       </section>
     </>

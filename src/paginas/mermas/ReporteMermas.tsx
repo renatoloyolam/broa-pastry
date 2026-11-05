@@ -6,6 +6,8 @@ import { calcularPeriodo, calcularRango, moverAncla, type TipoPeriodo } from '..
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
 import { ICONOS } from '../../componentes/iconos'
+import { NOMBRE_ETAPA, textoCantidad, type EtapaProceso } from '../../lib/mermasProceso'
+import type { Unidad } from '../../lib/costeo'
 
 interface Reporte {
   ver_costos: boolean
@@ -19,6 +21,48 @@ interface Reporte {
   }
   por_motivo: { motivo: string; unidades: number; valor: number | null }[]
   por_producto: { producto_id: number; nombre: string; unidades: number; valor: number | null; falta_costo: boolean | null }[]
+  perdida: { insumos: number; mano_obra: number } | null
+  proceso: {
+    registros: number
+    registros_evitables: number
+    por_valorizar: number | null
+    valor: number | null
+    valor_evitable: number | null
+    por_etapa: { etapa: EtapaProceso; registros: number; valor: number | null }[]
+    por_motivo: { motivo: string; registros: number; valor: number | null }[]
+    por_item: {
+      etapa: EtapaProceso
+      nombre: string
+      unidad: Unidad | null
+      registros: number
+      cantidad: number | null
+      valor: number | null
+      falta_valor: boolean | null
+      estimado: boolean | null
+    }[]
+  }
+}
+
+const veces = (n: number) => `${n} ${n === 1 ? 'vez' : 'veces'}`
+
+/** Producción y materia prima se miden distinto (kg, tandas): sin barras de unidades. */
+function ListaProceso({ filas, verCostos }: { filas: { clave: string; nombre: string; valor: number | null; detalle: string; pendiente?: boolean }[]; verCostos: boolean }) {
+  return (
+    <ul className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie">
+      {filas.map((f) => (
+        <li key={f.clave} className="px-4 py-3">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="min-w-0 truncate font-medium">{f.nombre}</span>
+            {verCostos && <span className="cifra shrink-0 font-semibold">{pesos(f.valor)}</span>}
+          </div>
+          <p className="mt-0.5 text-xs text-suave">
+            {f.detalle}
+            {f.pendiente && <span className="text-aviso"> · falta valorizar</span>}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 function Lista({ filas, verCostos }: { filas: { clave: string; nombre: string; unidades: number; valor: number | null; nota?: string }[]; verCostos: boolean }) {
@@ -77,6 +121,12 @@ export function ReporteMermas() {
 
   const t = datos?.total
   const verCostos = datos?.ver_costos ?? false
+  const p = datos?.proceso
+  const hayProducto = (t?.registros ?? 0) > 0
+  const hayProceso = (p?.registros ?? 0) > 0
+  const valorTotal = (t?.valor ?? 0) + (p?.valor ?? 0)
+  const valorEvitable = (t?.valor_evitable ?? 0) + (p?.valor_evitable ?? 0)
+  const registrosTotal = (t?.registros ?? 0) + (p?.registros ?? 0)
 
   return (
     <>
@@ -126,38 +176,81 @@ export function ReporteMermas() {
 
       {error && <Aviso>{error}</Aviso>}
 
-      {t && t.registros === 0 && (
+      {t && p && registrosTotal === 0 && (
         <EstadoVacio icono={ICONOS.mermas} titulo="Sin mermas en este período">
-          Registra las mermas al final del día desde la pestaña Mermas.
+          Regístralas desde la pestaña Mermas, también las de producción y materia prima.
         </EstadoVacio>
       )}
 
-      {datos && t && t.registros > 0 && (
+      {datos && t && p && registrosTotal > 0 && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-3">
             <Tarjeta className="col-span-2">
-              <p className="text-xs font-medium tracking-wide text-suave uppercase">{verCostos ? 'Costo de las mermas' : 'Unidades perdidas'}</p>
-              <p className="cifra mt-1 text-4xl font-bold text-primario">{verCostos ? pesos(t.valor) : decimal(t.unidades)}</p>
+              <p className="text-xs font-medium tracking-wide text-suave uppercase">{verCostos ? 'Costo de las mermas' : 'Mermas registradas'}</p>
+              <p className="cifra mt-1 text-4xl font-bold text-primario">{verCostos ? pesos(valorTotal) : registrosTotal}</p>
               <p className="mt-1 text-xs text-suave">
-                {decimal(t.unidades)} unidades en {t.registros} registros · se descuenta de la ganancia
+                {verCostos ? `${registrosTotal} ${registrosTotal === 1 ? 'registro' : 'registros'} · se descuenta de la ganancia` : `${decimal(t.unidades)} unidades de producto terminado · ${p.registros} en producción y materia prima`}
               </p>
             </Tarjeta>
-            <Tarjeta>
-              <p className="text-xs font-medium tracking-wide text-suave uppercase">Evitables</p>
-              <p className="cifra mt-1 text-2xl font-bold">{verCostos ? pesos(t.valor_evitable) : decimal(t.unidades_evitables)}</p>
-              <p className="mt-1 text-xs text-suave">
-                {verCostos && t.valor
-                  ? `${porcentaje((t.valor_evitable ?? 0) / t.valor, 0)} del total`
-                  : `${porcentaje(t.unidades_evitables / t.unidades, 0)} de las unidades`}
-              </p>
-            </Tarjeta>
-            <Tarjeta>
-              <p className="text-xs font-medium tracking-wide text-suave uppercase">No evitables</p>
-              <p className="cifra mt-1 text-2xl font-bold">
-                {verCostos ? pesos((t.valor ?? 0) - (t.valor_evitable ?? 0)) : decimal(t.unidades - t.unidades_evitables)}
-              </p>
-            </Tarjeta>
+            {verCostos && datos.perdida && (
+              <>
+                <Tarjeta>
+                  <p className="text-xs font-medium tracking-wide text-suave uppercase">Ingredientes perdidos</p>
+                  <p className="cifra mt-1 text-2xl font-bold">{pesos(datos.perdida.insumos)}</p>
+                </Tarjeta>
+                <Tarjeta>
+                  <p className="text-xs font-medium tracking-wide text-suave uppercase">Mano de obra perdida</p>
+                  <p className="cifra mt-1 text-2xl font-bold">{pesos(datos.perdida.mano_obra)}</p>
+                </Tarjeta>
+                <p className="col-span-2 -mt-1 text-xs text-suave">
+                  Finanzas resta solo los ingredientes: los sueldos ya están en Gastos.
+                </p>
+              </>
+            )}
+            {(verCostos || hayProducto) && (
+              <>
+                <Tarjeta>
+                  <p className="text-xs font-medium tracking-wide text-suave uppercase">Evitables</p>
+                  <p className="cifra mt-1 text-2xl font-bold">{verCostos ? pesos(valorEvitable) : decimal(t.unidades_evitables)}</p>
+                  <p className="mt-1 text-xs text-suave">
+                    {verCostos
+                      ? valorTotal > 0
+                        ? `${porcentaje(valorEvitable / valorTotal, 0)} del total`
+                        : ''
+                      : `${porcentaje(t.unidades_evitables / t.unidades, 0)} de las unidades`}
+                  </p>
+                </Tarjeta>
+                <Tarjeta>
+                  <p className="text-xs font-medium tracking-wide text-suave uppercase">No evitables</p>
+                  <p className="cifra mt-1 text-2xl font-bold">
+                    {verCostos ? pesos(valorTotal - valorEvitable) : decimal(t.unidades - t.unidades_evitables)}
+                  </p>
+                </Tarjeta>
+              </>
+            )}
           </div>
+
+          {verCostos && (
+            <section>
+              <h2 className="mb-2 text-lg font-semibold">¿Dónde se perdió?</h2>
+              <ListaProceso
+                verCostos
+                filas={[
+                  ...(hayProducto ? [{ clave: 'producto', nombre: NOMBRE_ETAPA.producto, valor: t.valor, detalle: `${decimal(t.unidades)} unidades` }] : []),
+                  ...p.por_etapa.map((e) => ({ clave: e.etapa, nombre: NOMBRE_ETAPA[e.etapa], valor: e.valor, detalle: veces(e.registros) })),
+                ]}
+              />
+            </section>
+          )}
+
+          {verCostos && (p.por_valorizar ?? 0) > 0 && (
+            <Aviso tipo="info">
+              {p.por_valorizar === 1 ? '1 merma espera' : `${p.por_valorizar} mermas esperan`} un monto y aún no suma aquí.{' '}
+              <Link to="/mermas" className="font-semibold text-primario">
+                Ponerle monto
+              </Link>
+            </Aviso>
+          )}
 
           {verCostos && (t.unidades_sin_costo ?? 0) > 0 && (
             <Aviso tipo="info">
@@ -168,13 +261,15 @@ export function ReporteMermas() {
             </Aviso>
           )}
 
+          {hayProducto && (
+          <>
           <section>
-            <h2 className="mb-2 text-lg font-semibold">Por motivo</h2>
+            <h2 className="mb-2 text-lg font-semibold">Producto terminado: por motivo</h2>
             <Lista verCostos={verCostos} filas={datos.por_motivo.map((m) => ({ clave: m.motivo, nombre: m.motivo, unidades: m.unidades, valor: m.valor }))} />
           </section>
 
           <section>
-            <h2 className="mb-2 text-lg font-semibold">Por producto</h2>
+            <h2 className="mb-2 text-lg font-semibold">Producto terminado: por producto</h2>
             <Lista
               verCostos={verCostos}
               filas={datos.por_producto
@@ -189,6 +284,33 @@ export function ReporteMermas() {
                 }))}
             />
           </section>
+          </>
+          )}
+
+          {hayProceso && (
+            <>
+              <section>
+                <h2 className="mb-2 text-lg font-semibold">Producción y materia prima: lo más perdido</h2>
+                <ListaProceso
+                  verCostos={verCostos}
+                  filas={p.por_item.map((i) => ({
+                    clave: `${i.etapa}-${i.nombre}-${i.unidad}`,
+                    nombre: i.nombre,
+                    valor: i.valor,
+                    pendiente: !!i.falta_valor,
+                    detalle: [NOMBRE_ETAPA[i.etapa], textoCantidad(i.cantidad, i.unidad), veces(i.registros), i.estimado ? 'estimado' : ''].filter(Boolean).join(' · '),
+                  }))}
+                />
+              </section>
+              <section>
+                <h2 className="mb-2 text-lg font-semibold">Producción y materia prima: por motivo</h2>
+                <ListaProceso
+                  verCostos={verCostos}
+                  filas={p.por_motivo.map((m) => ({ clave: m.motivo, nombre: m.motivo, valor: m.valor, detalle: veces(m.registros) }))}
+                />
+              </section>
+            </>
+          )}
         </div>
       )}
     </>

@@ -7,6 +7,8 @@
 import { fechaDia } from './formato'
 import { ganancia, margen, type DatosPanel } from './panel'
 import type { Periodo } from './periodos'
+import type { Unidad } from './costeo'
+import { NOMBRE_ETAPA, textoCantidad, type EtapaProceso } from './mermasProceso'
 
 export type Celda = string | number | null
 export interface Hoja {
@@ -35,6 +37,10 @@ export interface ReporteMermasExport {
   por_motivo: { motivo: string; unidades: number; valor: number | null }[]
   por_producto: { nombre: string; unidades: number; valor: number | null }[]
   total: { unidades: number; valor: number | null; valor_evitable: number | null; unidades_evitables: number }
+  perdida?: { insumos: number; mano_obra: number } | null
+  proceso?: {
+    por_item: { etapa: EtapaProceso; nombre: string; unidad: Unidad | null; cantidad: number | null; valor: number | null }[]
+  }
 }
 
 const r = (v: number | null | undefined) => (v == null ? null : Math.round(v))
@@ -115,6 +121,16 @@ export function hojasReporte(
         [],
         ['Por motivo'],
         ...mermas.por_motivo.map((m) => [m.motivo, m.unidades, ...(mc ? [r(m.valor)] : [])]),
+        ...(mermas.proceso?.por_item.length
+          ? [
+              [],
+              ['Producción y materia prima'],
+              ...mermas.proceso.por_item.map((i) => [`${i.nombre} (${NOMBRE_ETAPA[i.etapa]})`, textoCantidad(i.cantidad, i.unidad), ...(mc ? [r(i.valor)] : [])]),
+            ]
+          : []),
+        ...(mc && mermas.perdida
+          ? [[], ['Ingredientes perdidos', '', r(mermas.perdida.insumos)], ['Mano de obra perdida', '', r(mermas.perdida.mano_obra)]]
+          : []),
       ],
     })
   }

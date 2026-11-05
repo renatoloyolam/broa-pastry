@@ -13,6 +13,7 @@ type Alerta =
   | { codigo: 'sin_costo'; nivel: string; dias: number; total: number; productos: { producto_id: number; nombre: string; unidades: number; ventas: number }[] }
   | { codigo: 'margen_bajo'; nivel: string; dias: number; minimo: number; productos: { producto_id: number; nombre: string; unidades: number; margen: number }[] }
   | { codigo: 'mermas_altas'; nivel: string; casos: { periodo: 'dia' | 'semana'; fecha: string; valor: number; umbral: number }[] }
+  | { codigo: 'mermas_por_valorizar'; nivel: string; cantidad: number }
   | { codigo: 'variacion_costo'; nivel: string; umbral: number; cambios: { nombre: string; desde: string; antes: number; ahora: number; variacion: number }[] }
 
 function Tarjeta({ icono: Icono, titulo, children, enlace }: { icono: LucideIcon; titulo: ReactNode; children?: ReactNode; enlace?: { a: string; texto: string } }) {
@@ -199,6 +200,19 @@ export function PanelAlertas({
                     Límites: {a.casos.map((c) => `${c.periodo === 'dia' ? 'por día' : 'por semana'} ${pesos(c.umbral)}`).filter((v, i, x) => x.indexOf(v) === i).join(' · ')}
                   </p>
                 </Tarjeta>
+              )
+            case 'mermas_por_valorizar':
+              return (
+                <Tarjeta
+                  key={a.codigo}
+                  icono={ICONOS.costo}
+                  titulo={
+                    <>
+                      <b>{a.cantidad === 1 ? '1 merma espera' : `${a.cantidad} mermas esperan`}</b> un monto y no se descuenta{a.cantidad === 1 ? '' : 'n'} de la ganancia.
+                    </>
+                  }
+                  enlace={{ a: '/mermas', texto: 'Ponerle monto' }}
+                />
               )
             case 'variacion_costo':
               return (

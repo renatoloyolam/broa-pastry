@@ -27,6 +27,7 @@ export const TABLAS_RESPALDO: [tabla: string, orden: string][] = [
   ['venta_lineas', 'id'],
   ['motivos_merma', 'id'],
   ['mermas', 'id'],
+  ['mermas_proceso', 'id'],
   ['pedidos', 'id'],
   ['pedido_abonos', 'id'],
   ['pedido_costos', 'pedido_id'],

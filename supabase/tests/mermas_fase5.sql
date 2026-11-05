@@ -62,20 +62,13 @@ begin
   execute 'reset role';
   update public.permisos_admin set ver_costos = true;
 
-  -- Encargada: ni registra ni ve mermas
+  -- Encargada: registra y ve cantidades, nunca pesos
   perform set_config('request.jwt.claims', json_build_object('sub', e, 'role', 'authenticated')::text, true);
   execute 'set local role authenticated';
-  begin
-    insert into public.mermas (fecha, producto_id, cantidad, motivo_id, evitable) values ('2026-10-10', p_dan, 1, mot_bota, true);
-    raise exception 'FALLO: encargada registró una merma';
-  exception when insufficient_privilege then null;
-  end;
-  select count(*) into n from public.mermas;
-  if n <> 0 then raise exception 'FALLO: encargada ve mermas'; end if;
-  begin
-    perform public.reporte_mermas('2026-10-10', '2026-10-10');
-    raise exception 'FALLO: encargada vio el reporte';
-  exception when others then if sqlerrm like 'FALLO%' then raise; end if; end;
+  insert into public.mermas (fecha, producto_id, cantidad, motivo_id, evitable) values ('2026-10-10', p_dan, 1, mot_bota, true);
+  rep := public.reporte_mermas('2026-10-10', '2026-10-10');
+  if rep->'total'->>'valor' is not null or rep::text ~ '"valor"\s*:\s*[0-9]' then raise exception 'FALLO: encargada ve pesos'; end if;
+  if public.mermas_del_dia('2026-10-10')::text ~ '"valor"\s*:\s*[0-9]' then raise exception 'FALLO: encargada ve valores'; end if;
   despues := public.panel('2026-10-10', '2026-10-10', null, null);
   if despues->'resumen'->>'mermas' is not null then raise exception 'FALLO: encargada ve mermas en el panel'; end if;
   execute 'reset role';

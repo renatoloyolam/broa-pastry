@@ -155,7 +155,7 @@ export function Usuarios() {
                       <span>
                         <span className="block font-medium">{NOMBRE_ROL[r]}</span>
                         <span className="block text-xs text-suave">
-                          {r === 'encargada' && 'Solo ve ventas. Nunca costos ni ganancia.'}
+                          {r === 'encargada' && 'Ve ventas y anota mermas. Nunca costos ni ganancia.'}
                           {r === 'admin' && 'Casi todo; tú decides sus permisos.'}
                           {r === 'dueno' && 'Acceso total, incluido crear usuarios.'}
                         </span>
