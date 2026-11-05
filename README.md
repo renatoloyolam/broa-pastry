@@ -57,7 +57,14 @@ pedidos **no** se suman otra vez a las ventas.
 ### Mano de obra en recetas
 En cada receta se escriben las **horas de mano de obra y de G.I.F.**: el total de la tanda, sumando todas
 las etapas, sin importar cuántas personas participen. La app multiplica por el valor hora y divide por
-lo que rinde. El valor hora es uno solo y se cambia en Productos → Recetas (al cambiarlo se recalcula todo).
+lo que rinde. El valor hora es uno solo: **Productos → Recetas → Valor hora** (al cambiarlo se recalcula todo).
+Se puede escribir a mano o **calcular con trabajadores y gastos**, como la hoja "MDO Y GIF" de la planilla:
+- Sueldo por hora de cada persona = costo mensual ÷ (horas al día × días al mes).
+- **Mano de obra** = promedio del sueldo por hora de los trabajadores incluidos.
+- **G.I.F.** = gastos del mes ÷ días abiertos ÷ horas al día ÷ trabajadores incluidos.
+- La planilla divide siempre por 13; la app divide por las personas incluidas en la lista. Apaga
+  "Incluir" a quien no quieras que cuente. Con el cálculo activo, cualquier cambio en la lista
+  recalcula las recetas solo. Sueldos y gastos solo los ve quien gestiona las finanzas.
 Si conectas un producto que traía "Mano de obra y gastos (planilla)", la app avisa para quitarla y no
 contarla dos veces. En Finanzas, el Resultado real no resta esa parte: resta los sueldos y gastos reales.
 

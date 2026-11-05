@@ -81,83 +81,19 @@ export function RecetasLista() {
 
 /** El valor de una hora de mano de obra y de G.I.F.: uno solo para toda la app. */
 function ValorHoraTarjeta() {
-  const { valorHora, cargando, recargar } = useCatalogo()
-  const { puede } = useSesion()
-  const confirmar = useConfirmar()
-  const editable = puede('editar_catalogo')
-  const [manoObra, setManoObra] = useState('')
-  const [gif, setGif] = useState('')
-  const [abierta, setAbierta] = useState(false)
-  const [guardando, setGuardando] = useState(false)
-  const [error, setError] = useState('')
-  const [ok, setOk] = useState(false)
-
+  const { valorHora, cargando } = useCatalogo()
   if (cargando) return null
-
-  function abrir() {
-    setManoObra(decimal(valorHora.mano_obra))
-    setGif(decimal(valorHora.gif))
-    setError('')
-    setOk(false)
-    setAbierta(true)
-  }
-
-  async function guardar() {
-    const mo = leerNumero(manoObra)
-    const g = leerNumero(gif)
-    if (mo == null || mo < 0 || g == null || g < 0) return setError('Escribe los valores en pesos, por ejemplo 4.439.')
-    if (
-      !(await confirmar({
-        mensaje: 'Se recalculan todas las recetas que usan horas y los productos conectados a ellas. El nuevo costo rige desde hoy. ¿Continuar?',
-        accion: 'Cambiar valor hora',
-      }))
-    )
-      return
-    setGuardando(true)
-    setError('')
-    const { error } = await supabase.from('valores_hora').update({ mano_obra: mo, gif: g }).eq('id', true)
-    setGuardando(false)
-    if (error) return setError(mensajeError(error))
-    await recargar()
-    setAbierta(false)
-    setOk(true)
-  }
-
   return (
-    <Tarjeta className="mb-3 space-y-3">
-      <div className="flex items-center gap-3">
-        <IconoCirculo icono={ICONOS.horarios} />
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold">Valor hora</p>
-          <p className="text-sm text-suave">
-            Mano de obra <span className="cifra">{pesos(valorHora.mano_obra)}</span> · G.I.F. <span className="cifra">{pesos(valorHora.gif)}</span>
-          </p>
-        </div>
-        {editable && !abierta && (
-          <button type="button" onClick={abrir} className="min-h-11 shrink-0 px-2 text-sm font-semibold text-primario">
-            Cambiar
-          </button>
-        )}
-      </div>
-      {abierta && (
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-2">
-            <Campo etiqueta="Mano de obra, por hora" inputMode="decimal" value={manoObra} onChange={(e) => setManoObra(e.target.value)} />
-            <Campo etiqueta="G.I.F., por hora" inputMode="decimal" value={gif} onChange={(e) => setGif(e.target.value)} />
-          </div>
-          {error && <Aviso>{error}</Aviso>}
-          <div className="grid grid-cols-2 gap-2">
-            <Boton icono={ICONOS.cancelar} variante="secundario" onClick={() => setAbierta(false)}>
-              Cancelar
-            </Boton>
-            <Boton icono={ICONOS.guardar} onClick={guardar} cargando={guardando}>
-              Guardar
-            </Boton>
-          </div>
-        </div>
-      )}
-      {ok && <Aviso tipo="ok">Valor hora actualizado. Las recetas se recalcularon.</Aviso>}
-    </Tarjeta>
+    <Link to="/productos/valor-hora" className="mb-3 flex items-center gap-3 rounded-2xl border border-borde bg-superficie p-4 active:bg-superficie-2">
+      <IconoCirculo icono={ICONOS.horarios} />
+      <span className="min-w-0 flex-1">
+        <span className="block font-semibold">Valor hora</span>
+        <span className="block text-sm text-suave">
+          Mano de obra <span className="cifra">{pesos(valorHora.mano_obra)}</span> · G.I.F. <span className="cifra">{pesos(valorHora.gif)}</span>
+        </span>
+      </span>
+      <ICONOS.siguiente className="h-5 w-5 shrink-0 text-suave" aria-hidden />
+    </Link>
   )
 }
 

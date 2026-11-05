@@ -32,6 +32,8 @@ export const TABLAS_RESPALDO: [tabla: string, orden: string][] = [
   ['pedido_abonos', 'id'],
   ['pedido_costos', 'pedido_id'],
   ['valores_hora', 'id'],
+  ['costo_trabajadores', 'id'],
+  ['costo_gif', 'id'],
   ['gastos_meses', 'mes'],
   ['gastos', 'id'],
   ['compras', 'id'],
