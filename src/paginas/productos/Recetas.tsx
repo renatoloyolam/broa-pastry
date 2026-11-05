@@ -5,31 +5,38 @@ import { costoHoras, costoReceta, esCostoIndirecto, UNIDADES, type ItemReceta, t
 import { decimal, leerNumero, pesos } from '../../lib/formato'
 import { mensajeError, supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
-import { Aviso, Boton, Campo, Encabezado, EstadoVacio, IconoCirculo, Insignia, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
+import { AccionEnlace, Aviso, Boton, Campo, Encabezado, EstadoVacio, IconoCirculo, Insignia, Interruptor, Pestanas, Selector, Tarjeta } from '../../componentes/ui'
 import { PESTANAS_CATALOGO } from './Productos'
 import { useConfirmar } from '../../componentes/Confirmar'
 import { ICONOS } from '../../componentes/iconos'
+import { agruparRecetas } from '../../lib/recetasItems'
 
 export function RecetasLista() {
-  const { recetas, cargando, error } = useCatalogo()
+  const { recetas, itemsRecetas, cargando, error } = useCatalogo()
   const { puede } = useSesion()
   const [busqueda, setBusqueda] = useState('')
   const filtradas = recetas.filter((r) => r.nombre.toLowerCase().includes(busqueda.toLowerCase().trim()))
+  const grupos = agruparRecetas(filtradas, itemsRecetas)
 
   return (
     <>
       <Encabezado titulo="Recetas" />
       <Pestanas opciones={PESTANAS_CATALOGO} />
       {error && <Aviso>{error}</Aviso>}
-      {puede('editar_catalogo') && (
-        <Link
-          to="/productos/recetas/nueva"
-          className="mb-3 flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-primario font-semibold text-primario-texto"
-        >
-          <ICONOS.agregar className="h-5 w-5 shrink-0" aria-hidden />
-          Nueva receta
-        </Link>
-      )}
+      <div className="mb-3 flex gap-2">
+        {puede('editar_catalogo') && (
+          <Link
+            to="/productos/recetas/nueva"
+            className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl bg-primario font-semibold text-primario-texto"
+          >
+            <ICONOS.agregar className="h-5 w-5 shrink-0" aria-hidden />
+            Nueva receta
+          </Link>
+        )}
+        <AccionEnlace a="/productos/recetas/items" icono={ICONOS.categorias} className="min-h-12 rounded-2xl px-4">
+          Ítems
+        </AccionEnlace>
+      </div>
       {recetas.length > 5 && (
         <input
           type="search"
@@ -46,35 +53,45 @@ export function RecetasLista() {
           agrega los ingredientes con su precio en la pestaña Ingredientes.
         </EstadoVacio>
       )}
-      <ul className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie">
-        {filtradas.map((r) => (
-          <li key={r.id}>
-            <Link to={`/productos/recetas/${r.id}`} className="flex min-h-16 items-center gap-3 px-4 py-3 active:bg-superficie-2">
-              <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium">
-                  {r.nombre} {r.es_base && <Insignia clase="bg-acento/20 text-primario">Base</Insignia>}
-                </span>
-                <span className="block text-xs text-suave">
-                  Rinde {decimal(r.rendimiento)} {r.unidad_rendimiento}
-                  {r.costo_total != null && ` · Total ${pesos(r.costo_total)}`}
-                </span>
-              </span>
-              <span className="shrink-0 text-right">
-                {r.costo_unitario == null ? (
-                  <Insignia clase="bg-aviso/15 text-aviso">Incompleta</Insignia>
-                ) : (
-                  <>
-                    <span className="cifra block font-semibold">
-                      {r.costo_unitario < 10 ? `$${decimal(r.costo_unitario, 2)}` : pesos(r.costo_unitario)}
+      <div className="space-y-5">
+        {grupos.map((g) => (
+          <section key={g.clave}>
+            <h2 className="mb-2 flex items-baseline justify-between px-1">
+              <span className="text-lg font-semibold">{g.nombre}</span>
+              <span className="text-xs text-suave">{g.recetas.length} {g.recetas.length === 1 ? 'receta' : 'recetas'}</span>
+            </h2>
+          <ul className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde bg-superficie">
+            {g.recetas.map((r) => (
+              <li key={r.id}>
+                <Link to={`/productos/recetas/${r.id}`} className="flex min-h-16 items-center gap-3 px-4 py-3 active:bg-superficie-2">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">
+                      {r.nombre} {r.es_base && <Insignia clase="bg-acento/20 text-primario">Base</Insignia>}
                     </span>
-                    <span className="block text-xs text-suave">por {r.unidad_rendimiento}</span>
-                  </>
-                )}
-              </span>
-            </Link>
-          </li>
+                    <span className="block text-xs text-suave">
+                      Rinde {decimal(r.rendimiento)} {r.unidad_rendimiento}
+                      {r.costo_total != null && ` · Total ${pesos(r.costo_total)}`}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-right">
+                    {r.costo_unitario == null ? (
+                      <Insignia clase="bg-aviso/15 text-aviso">Incompleta</Insignia>
+                    ) : (
+                      <>
+                        <span className="cifra block font-semibold">
+                          {r.costo_unitario < 10 ? `$${decimal(r.costo_unitario, 2)}` : pesos(r.costo_unitario)}
+                        </span>
+                        <span className="block text-xs text-suave">por {r.unidad_rendimiento}</span>
+                      </>
+                    )}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          </section>
         ))}
-      </ul>
+      </div>
     </>
   )
 }
@@ -110,7 +127,7 @@ export function RecetaEditor() {
   const { id } = useParams()
   const esNueva = id === 'nueva'
   const navegar = useNavigate()
-  const { recetas, ingredientes, productos, opciones, costos, adicionales: adicionalesCosto, valorHora, recargar, cargando } = useCatalogo()
+  const { recetas, ingredientes, productos, opciones, costos, adicionales: adicionalesCosto, valorHora, itemsRecetas, recargar, cargando } = useCatalogo()
   const { puede } = useSesion()
   const editable = puede('editar_catalogo')
   const confirmar = useConfirmar()
@@ -120,6 +137,7 @@ export function RecetaEditor() {
   const [rendimiento, setRendimiento] = useState('')
   const [unidad, setUnidad] = useState<Unidad>('un')
   const [esBase, setEsBase] = useState(false)
+  const [itemId, setItemId] = useState('')
   const [notas, setNotas] = useState('')
   const [horasManoObra, setHorasManoObra] = useState('')
   const [horasGif, setHorasGif] = useState('')
@@ -143,6 +161,7 @@ export function RecetaEditor() {
       setRendimiento(decimal(receta.rendimiento, 3))
       setUnidad(receta.unidad_rendimiento)
       setEsBase(receta.es_base)
+      setItemId(receta.item_id ? String(receta.item_id) : '')
       setNotas(receta.notas ?? '')
       setHorasManoObra(receta.horas_mano_obra ? decimal(receta.horas_mano_obra, 3) : '')
       setHorasGif(receta.horas_gif ? decimal(receta.horas_gif, 3) : '')
@@ -247,8 +266,16 @@ export function RecetaEditor() {
       p_horas_mano_obra: horasMo,
       p_horas_gif: horasG,
     })
+    if (error) {
+      setGuardando(false)
+      return setError(error.code === '23505' ? 'Ya existe una receta con ese nombre.' : mensajeError(error))
+    }
+    const nuevoItem = itemId ? Number(itemId) : null
+    if (nuevoItem !== (receta?.item_id ?? null)) {
+      const r = await supabase.from('recetas').update({ item_id: nuevoItem }).eq('id', Number(data))
+      if (r.error) setError(`La receta se guardó, pero no se pudo cambiar el ítem: ${mensajeError(r.error)}`)
+    }
     setGuardando(false)
-    if (error) return setError(error.code === '23505' ? 'Ya existe una receta con ese nombre.' : mensajeError(error))
     await recargar()
     if (esNueva) {
       navegar(`/productos/recetas/${data}`, { replace: true })
@@ -296,6 +323,16 @@ export function RecetaEditor() {
       <div className="space-y-4 pb-24">
         <Tarjeta className="space-y-4">
           <Campo etiqueta="Nombre" value={nombre} disabled={!editable} onChange={(e) => setNombre(e.target.value)} />
+          <Selector etiqueta="Ítem" value={itemId} disabled={!editable} onChange={(e) => setItemId(e.target.value)}>
+            <option value="">Sin ítem</option>
+            {[...itemsRecetas]
+              .sort((a, b) => a.orden - b.orden)
+              .map((it) => (
+                <option key={it.id} value={it.id}>
+                  {it.nombre}
+                </option>
+              ))}
+          </Selector>
           <div className="grid grid-cols-2 gap-3">
             <Campo
               etiqueta="Rinde"

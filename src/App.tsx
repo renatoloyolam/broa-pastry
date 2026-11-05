@@ -28,6 +28,7 @@ const Simulador = cargar(() => import('./paginas/productos/Simulador'), 'Simulad
 const RecetasLista = cargar(() => import('./paginas/productos/Recetas'), 'RecetasLista')
 const RecetaEditor = cargar(() => import('./paginas/productos/Recetas'), 'RecetaEditor')
 const ValorHora = cargar(() => import('./paginas/productos/ValorHora'), 'ValorHora')
+const ItemsRecetas = cargar(() => import('./paginas/productos/ItemsRecetas'), 'ItemsRecetas')
 const IngredientesLista = cargar(() => import('./paginas/productos/Ingredientes'), 'IngredientesLista')
 const IngredienteEditor = cargar(() => import('./paginas/productos/Ingredientes'), 'IngredienteEditor')
 const Mermas = cargar(() => import('./paginas/mermas/Mermas'), 'Mermas')
@@ -86,6 +87,7 @@ function Rutas() {
           <Route path="mapa" element={<MapaProductos />} />
           <Route path="simulador" element={<Simulador />} />
           <Route path="recetas" element={<RecetasLista />} />
+          <Route path="recetas/items" element={<ItemsRecetas />} />
           <Route path="recetas/:id" element={<RecetaEditor />} />
           <Route path="valor-hora" element={<ValorHora />} />
           <Route path="ingredientes" element={<IngredientesLista />} />

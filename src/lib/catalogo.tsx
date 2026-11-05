@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { Outlet } from 'react-router-dom'
 import type { Ingrediente, Unidad } from './costeo'
 import { mensajeError, supabase } from './supabase'
+import type { ItemRecetas } from './recetasItems'
 
 export interface Categoria {
   id: number
@@ -61,6 +62,7 @@ export interface Receta {
   costo_unitario: number | null
   horas_mano_obra: number
   horas_gif: number
+  item_id: number | null
 }
 
 export interface ValorHora {
@@ -77,6 +79,7 @@ interface Datos {
   recetas: Receta[]
   ingredientes: (Ingrediente & { activo: boolean; actualizado_en: string })[]
   valorHora: ValorHora
+  itemsRecetas: ItemRecetas[]
 }
 
 interface ContextoCatalogo extends Datos {
@@ -89,7 +92,7 @@ interface ContextoCatalogo extends Datos {
 }
 
 const Contexto = createContext<ContextoCatalogo | null>(null)
-const vacio: Datos = { categorias: [], productos: [], opciones: [], costos: [], adicionales: [], recetas: [], ingredientes: [], valorHora: { mano_obra: 0, gif: 0 } }
+const vacio: Datos = { categorias: [], productos: [], opciones: [], costos: [], adicionales: [], recetas: [], ingredientes: [], valorHora: { mano_obra: 0, gif: 0 }, itemsRecetas: [] }
 
 /** Carga todo el catálogo una vez para las pantallas de Productos. */
 export function CatalogoProvider({ children }: { children?: ReactNode }) {
@@ -107,6 +110,7 @@ export function CatalogoProvider({ children }: { children?: ReactNode }) {
       supabase.from('v_recetas').select('*').order('nombre'),
       supabase.from('ingredientes').select('*').order('nombre'),
       supabase.from('valores_hora').select('mano_obra, gif').maybeSingle(),
+      supabase.from('recetas_items').select('id, nombre, orden').order('orden').order('nombre'),
     ])
     const fallo = r.find((x) => x.error)
     if (fallo) {
@@ -143,6 +147,7 @@ export function CatalogoProvider({ children }: { children?: ReactNode }) {
           mano_obra: Number((r[7].data as ValorHora | null)?.mano_obra ?? 0),
           gif: Number((r[7].data as ValorHora | null)?.gif ?? 0),
         },
+        itemsRecetas: num<ItemRecetas>(r[8].data),
       })
     }
     setCargando(false)

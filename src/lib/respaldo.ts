@@ -16,6 +16,7 @@ export const TABLAS_RESPALDO: [tabla: string, orden: string][] = [
   ['alias_opciones', 'alias'],
   ['ingredientes', 'id'],
   ['ingrediente_precios', 'id'],
+  ['recetas_items', 'id'],
   ['recetas', 'id'],
   ['receta_items', 'id'],
   ['receta_adicionales', 'id'],

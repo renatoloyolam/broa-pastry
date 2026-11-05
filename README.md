@@ -57,7 +57,8 @@ pedidos **no** se suman otra vez a las ventas.
 ### Mano de obra en recetas
 En cada receta se escriben las **horas de mano de obra y de G.I.F.**: el total de la tanda, sumando todas
 las etapas, sin importar cuántas personas participen. La app multiplica por el valor hora y divide por
-lo que rinde. El valor hora es uno solo: **Productos → Recetas → Valor hora** (al cambiarlo se recalcula todo).
+lo que rinde. Las recetas se agrupan por **ítem** (Galletería, Bollería, Cafetería, Pastelería,
+Festividades); en **Recetas → Ítems** se crean, renombran, ordenan o borran. El valor hora es uno solo: **Productos → Recetas → Valor hora** (al cambiarlo se recalcula todo).
 Se puede escribir a mano o **calcular con trabajadores y gastos**, como la hoja "MDO Y GIF" de la planilla:
 - Sueldo por hora de cada persona = costo mensual ÷ (horas al día × días al mes).
 - **Mano de obra** = promedio del sueldo por hora de los trabajadores incluidos.
