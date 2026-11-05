@@ -98,3 +98,21 @@ export function fechaHora(valor: Date | string | number): string {
   const { d, m, a, h, min } = partes(new Date(valor))
   return `${d}/${m}/${a} ${h}:${min}`
 }
+
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+/** "2026-11-05" → "Jueves 5 de noviembre" */
+export function fechaLarga(iso: string): string {
+  const dia = nombreDia(iso)
+  return `${dia[0].toUpperCase()}${dia.slice(1)} ${Number(iso.slice(8, 10))} de ${MESES[Number(iso.slice(5, 7)) - 1]}`
+}
+
+/** Saludo según la hora (0–23). */
+export function saludo(hora: number): string {
+  return hora < 12 ? 'Buenos días' : hora < 20 ? 'Buenas tardes' : 'Buenas noches'
+}
+
+/** Hora actual en Santiago (0–23). */
+export function horaSantiago(): number {
+  return Number(new Intl.DateTimeFormat('en-GB', { timeZone: ZONA, hour: '2-digit', hour12: false }).format(new Date())) % 24
+}

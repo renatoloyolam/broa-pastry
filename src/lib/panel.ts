@@ -96,3 +96,18 @@ export function pesosCompacto(v: number) {
   if (a >= 1000) return `${s}$${Math.round(a / 1000)} mil`
   return `${s}$${Math.round(a)}`
 }
+
+/** Puntos de una línea para un minigráfico SVG ("0,28 37,22 …"); vacío si hay menos de 2 valores. */
+export function puntosLinea(valores: number[], ancho: number, alto: number, margen = 2) {
+  if (valores.length < 2) return ''
+  const min = Math.min(...valores)
+  const rango = Math.max(...valores) - min
+  return valores
+    .map((v, i) => {
+      const x = (i / (valores.length - 1)) * ancho
+      // Sin variación, la línea va al medio
+      const y = rango === 0 ? alto / 2 : margen + (1 - (v - min) / rango) * (alto - margen * 2)
+      return `${Math.round(x * 10) / 10},${Math.round(y * 10) / 10}`
+    })
+    .join(' ')
+}

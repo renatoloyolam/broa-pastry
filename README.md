@@ -83,7 +83,7 @@ comparado con el de su categoría. Arriba avisa en rojo los productos que se ven
 y el precio mínimo para no perder. También lista los productos sin costo completo y los activos que
 no se vendieron.
 
-### Resumen semanal (Inicio → Resumen, o la notificación)
+### Resumen semanal (Inicio → Ver todo → Resumen, o la notificación)
 Ventas de la semana contra la anterior, clientes, ticket, ganancia, margen y mermas (según permisos),
 día a día, lo más vendido, y la meta del mes con los pagos de la semana. **Notificación cada lunes**
 (16:00 UTC: 13:00 en verano / 12:00 en invierno) para quien la active en Más → Mi cuenta → Resumen
@@ -91,7 +91,7 @@ semanal ("Enviarme uno ahora" sirve para probar). En iPhone requiere la app inst
 pantalla de inicio. Partes: tabla `push_suscripciones`, llaves en `private.push_config`, Edge
 Function `resumen-semanal` y la tarea `resumen-semanal` de pg_cron.
 
-### Comparar meses (Inicio → Comparar meses)
+### Comparar meses (Inicio → Ver todo → Comparar)
 Pone dos meses lado a lado (por defecto este y el anterior): ventas, venta promedio por día, clientes,
 ticket promedio, unidades y, si se ven costos, ganancia, margen y mermas; con "Meses completos" y
 gastos cargados, también la ganancia real. "A la misma fecha" compara los mismos días (si el mes

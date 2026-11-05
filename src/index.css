@@ -16,6 +16,12 @@
   --exito: #3f7a3a;
   --aviso: #a8741a;
   --grafico: #4a8a3c; /* validado: contraste y croma sobre fondo claro */
+  /* Tarjeta principal del Inicio: el color del logo, igual en modo claro y oscuro */
+  --marca: #324d4d;
+  --marca-texto: #f4f1ea;
+  --marca-suave: #c9d6cf;
+  --marca-detalle: #b9d3ab;
+  --marca-baja: #f5b7a6;
   color-scheme: light;
 }
 
@@ -54,6 +60,11 @@
   --color-exito: var(--exito);
   --color-aviso: var(--aviso);
   --color-grafico: var(--grafico);
+  --color-marca: var(--marca);
+  --color-marca-texto: var(--marca-texto);
+  --color-marca-suave: var(--marca-suave);
+  --color-marca-detalle: var(--marca-detalle);
+  --color-marca-baja: var(--marca-baja);
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
   --font-serif: 'New York', Georgia, 'Times New Roman', serif;
 }

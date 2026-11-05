@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { decimal, fecha, fechaDia, fechaHora, hoyIso, leerNumero, nombreDia, numero, pesos, porcentaje } from './formato'
+import { decimal, fecha, fechaDia, fechaHora, fechaLarga, hoyIso, leerNumero, nombreDia, numero, pesos, porcentaje, saludo } from './formato'
 
 describe('formato chileno', () => {
   it('pesos sin decimales y con punto de miles', () => {
@@ -51,5 +51,17 @@ describe('formato chileno', () => {
     // 21/10/2026 02:30 UTC = 20/10/2026 23:30 en Santiago (UTC-3 en horario de verano)
     expect(fecha('2026-10-21T02:30:00Z')).toBe('20/10/2026')
     expect(fechaHora('2026-10-21T17:05:00Z')).toBe('21/10/2026 14:05')
+  })
+})
+
+describe('saludo del inicio', () => {
+  it('fecha larga', () => {
+    expect(fechaLarga('2026-11-05')).toBe('Jueves 5 de noviembre')
+    expect(fechaLarga('2026-01-31')).toBe('Sábado 31 de enero')
+  })
+  it('según la hora', () => {
+    expect(saludo(8)).toBe('Buenos días')
+    expect(saludo(12)).toBe('Buenas tardes')
+    expect(saludo(20)).toBe('Buenas noches')
   })
 })

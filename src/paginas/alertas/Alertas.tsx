@@ -5,6 +5,7 @@ import { fechaDia, nombreDia, pesos, porcentaje } from '../../lib/formato'
 import { diasDesdeRespaldo } from '../../lib/respaldo'
 import { supabase } from '../../lib/supabase'
 import { useSesion } from '../../sesion/SesionProvider'
+import { hayPedidosCercanos, textoPedidos, textoVencimiento, type PagoProximo, type ResumenPedidos } from '../../lib/avisos'
 import { ICONOS } from '../../componentes/iconos'
 
 type Alerta =
@@ -33,10 +34,10 @@ function Tarjeta({ icono: Icono, titulo, children, enlace }: { icono: LucideIcon
   )
 }
 
-/** Alertas que se muestran arriba en Inicio. */
-export function AlertasInicio() {
-  const { puede, info, config } = useSesion()
-  const [alertas, setAlertas] = useState<Alerta[] | null>(null)
+/** Alertas de la base y recordatorio de respaldo, para la campana del Inicio. */
+export function useAlertas() {
+  const { info, config } = useSesion()
+  const [alertas, setAlertas] = useState<Alerta[]>([])
 
   useEffect(() => {
     supabase.rpc('alertas').then(({ data }) => setAlertas((data as Alerta[]) ?? []))
@@ -45,22 +46,55 @@ export function AlertasInicio() {
   // Recordatorio semanal de respaldo (solo dueños)
   const diasRespaldo = diasDesdeRespaldo(config?.ultimo_respaldo)
   const pedirRespaldo = info?.perfil?.rol === 'dueno' && (diasRespaldo == null || diasRespaldo >= 7)
-  const cantidad = (alertas?.length ?? 0) + (pedirRespaldo ? 1 : 0)
-  if (!alertas || cantidad === 0) return null
+  const fechasSinVentas = alertas.find((a) => a.codigo === 'dias_sin_ventas')?.fechas ?? []
+  return { alertas, diasRespaldo, pedirRespaldo, fechasSinVentas }
+}
+
+/** Lo que se abre al tocar la campana. */
+export function PanelAlertas({
+  alertas,
+  diasRespaldo,
+  pedirRespaldo,
+  pedidos,
+  pago,
+}: ReturnType<typeof useAlertas> & { pedidos: ResumenPedidos | null; pago: PagoProximo | null }) {
+  const { puede } = useSesion()
+  const verPedidos = hayPedidosCercanos(pedidos)
+  const cantidad = alertas.length + (pedirRespaldo ? 1 : 0) + (verPedidos ? 1 : 0) + (pago ? 1 : 0)
 
   return (
-    <section className="mb-4 overflow-hidden rounded-2xl border border-aviso/40 bg-superficie" aria-label="Alertas">
+    <section className="mb-4 overflow-hidden rounded-2xl border border-borde bg-superficie" aria-label="Alertas">
       <div className="flex items-center justify-between border-b border-borde px-4 py-2">
-        <p className="text-sm font-semibold text-aviso">
-          {cantidad === 1 ? '1 alerta' : `${cantidad} alertas`}
-        </p>
+        <p className="text-sm font-semibold">{cantidad === 0 ? 'Todo al día' : cantidad === 1 ? '1 alerta' : `${cantidad} alertas`}</p>
         {puede('ver_costos') && (
-          <Link to="/mas/alertas" className="text-xs font-semibold text-primario">
+          <Link to="/mas/alertas" className="py-1 text-xs font-semibold text-primario">
             Configurar
           </Link>
         )}
       </div>
       <ul className="divide-y divide-borde">
+        {verPedidos && pedidos && (
+          <Tarjeta
+            icono={ICONOS.pedidos}
+            titulo={
+              <>
+                Pedidos de tortas: <b>{textoPedidos(pedidos)}</b>. Saldo por cobrar {pesos(pedidos.saldo_pendiente)}.
+              </>
+            }
+            enlace={{ a: '/pedidos', texto: 'Ver pedidos' }}
+          />
+        )}
+        {pago && (
+          <Tarjeta
+            icono={ICONOS.gastos}
+            titulo={
+              <>
+                <b>{pago.nombre}</b> {pesos(pago.monto)} {textoVencimiento(pago.dias)}.
+              </>
+            }
+            enlace={{ a: '/finanzas', texto: 'Ver gastos' }}
+          />
+        )}
         {pedirRespaldo && (
           <Tarjeta
             icono={ICONOS.respaldo}

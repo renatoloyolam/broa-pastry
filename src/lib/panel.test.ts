@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ganancia, margen, pesosCompacto, rankingRentabilidad, ticketPromedio, variacion, type ProductoPanel } from './panel'
+import { ganancia, margen, pesosCompacto, puntosLinea, rankingRentabilidad, ticketPromedio, variacion, type ProductoPanel } from './panel'
 
 describe('indicadores del panel', () => {
   it('brownie: $100 neto vendido, $50 de costo → ganancia $50, margen 50%', () => {
@@ -46,5 +46,13 @@ describe('indicadores del panel', () => {
     expect(pesosCompacto(23659118)).toBe('$24 M')
     expect(pesosCompacto(500)).toBe('$500')
     expect(pesosCompacto(-45000)).toBe('-$45 mil')
+  })
+})
+
+describe('minigráfico', () => {
+  it('escala entre el mínimo y el máximo; lo más alto queda arriba', () => {
+    expect(puntosLinea([0, 10], 100, 24)).toBe('0,22 100,2')
+    expect(puntosLinea([5, 5], 100, 24)).toBe('0,12 100,12')
+    expect(puntosLinea([5], 100, 24)).toBe('')
   })
 })
